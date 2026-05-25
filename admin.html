@@ -5,29 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Transparansi Dana Desa</title>
     <style>
+        /* --- STYLES DASAR (SENADA DENGAN INDEX) --- */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #f1f5f9; color: #334155; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 30px 15px; }
+        body { background-color: #f1f5f9; color: #334155; padding-bottom: 60px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 30px 15px; }
         
-        /* --- HEADER & NAV --- */
-        header { background: #1e293b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+        /* --- HEADER CONTROL PANEL --- */
+        header { background: #1e293b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #10b981; }
         .btn-kembali { background: #64748b; color: white; text-decoration: none; padding: 8px 15px; border-radius: 6px; font-size: 13px; font-weight: bold; }
+        .btn-kembali:hover { background: #475569; }
         
-        /* --- FORM STYLES --- */
-        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card-form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid #10b981; }
+        /* --- LAYOUT MENU FORM --- */
+        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px; }
+        .card-form { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 5px solid #10b981; }
         .card-form.blue { border-top-color: #2563eb; }
         .card-form.orange { border-top-color: #f59e0b; }
+        .card-form.red { border-top-color: #ef4444; }
         
-        h3 { margin-bottom: 15px; color: #1e293b; font-size: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #64748b; }
-        .form-control { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+        h3 { margin-bottom: 18px; color: #1e293b; font-size: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; font-weight: bold; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; color: #475569; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; color: #334155; }
+        .form-control:focus { outline: none; border-color: #10b981; }
         
-        .btn-simpan { background: #10b981; color: white; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        /* --- BUTTONS --- */
+        .btn-simpan { background: #10b981; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; margin-top: 5px; }
         .btn-simpan:hover { background: #059669; }
         .btn-blue { background: #2563eb; }
         .btn-blue:hover { background: #1d4ed8; }
+        .btn-orange { background: #f59e0b; }
+        .btn-orange:hover { background: #d97706; }
+        
+        /* --- LIST PREVIEW DI ADMIN --- */
+        .list-preview { margin-top: 15px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px; max-height: 150px; overflow-y: auto; }
+        .preview-item { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px solid #e2e8f0; }
+        .preview-item:last-child { border-bottom: none; }
+        .btn-hapus { background: #ef4444; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 10px; }
     </style>
 </head>
 <body>
@@ -35,73 +48,64 @@
     <div class="container">
         <header>
             <div>
-                <h2 style="color: #10b981;">Control Panel Admin</h2>
-                <p style="font-size: 12px; color: #94a3b8;">Update informasi publik Desa Maju Jaya secara realtime</p>
+                <h2 style="color: #10b981; font-size: 22px;">Control Panel Administrator</h2>
+                <p style="font-size: 13px; color: #94a3b8; margin-top: 2px;">Kelola dan perbarui seluruh data informasi publik pada index.html</p>
             </div>
-            <a href="./index.html" class="btn-kembali">← Lihat Website</a>
+            <a href="index.html" class="btn-kembali">← Lihat Website Utama</a>
         </header>
 
         <div class="grid-form">
             
-            <!-- 1. INPUT STATISTIK DESA -->
             <div class="card-form">
-                <h3>1. Update Statistik Beranda</h3>
-                <form id="form-stats" onsubmit="simpanStatistik(event)">
-                    <div class="form-group">
-                        <label>Jumlah Penduduk (Jiwa)</label>
-                        <input type="text" id="input-penduduk" class="form-control" required placeholder="Contoh: 3.421 Jiwa">
-                    </div>
-                    <div class="form-group">
-                        <label>Jumlah Dusun</label>
-                        <input type="text" id="input-dusun" class="form-control" required placeholder="Contoh: 5 Dusun">
-                    </div>
-                    <div class="form-group">
-                        <label>Total Dana Desa (Pagu)</label>
-                        <input type="text" id="input-pagu" class="form-control" required placeholder="Contoh: 1,25 Milyar">
-                    </div>
-                    <div class="form-group">
-                        <label>Persentase Realisasi (%)</label>
-                        <input type="text" id="input-persen" class="form-control" required placeholder="Contoh: 68%">
-                    </div>
-                    <button type="submit" class="btn-simpan">Update Statistik</button>
-                </form>
-            </div>
-
-            <!-- 2. INPUT PROFIL DESA -->
-            <div class="card-form blue">
-                <h3>2. Update Profil & Visi Misi</h3>
+                <h3>1. Input Profil Desa</h3>
                 <form id="form-profil" onsubmit="simpanProfil(event)">
                     <div class="form-group">
-                        <label>Nama Kepala Desa</label>
-                        <input type="text" id="input-kades" class="form-control" required>
+                        <label>Visi Pemerintah Desa</label>
+                        <textarea id="input-visi" class="form-control" rows="3" required placeholder="Tulis visi desa di sini..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Masa Bakti</label>
+                        <label>Nama Kepala Desa Terpilih</label>
+                        <input type="text" id="input-kades" class="form-control" required placeholder="Contoh: Bpk. H. Supriyanto">
+                    </div>
+                    <div class="form-group">
+                        <label>Masa Bakti / Periode Jabatan</label>
                         <input type="text" id="input-bakti" class="form-control" required placeholder="Contoh: 2021 - 2027">
                     </div>
-                    <div class="form-group">
-                        <label>Kalimat Visi Desa</label>
-                        <textarea id="input-visi" class="form-control" rows="3" required></textarea>
-                    </div>
-                    <button type="submit" class="btn-simpan btn-blue">Update Profil</button>
+                    <button type="submit" class="btn-simpan">Simpan Profil Desa</button>
                 </form>
             </div>
 
-            <!-- 3. INPUT DATA TABEL REALISASI -->
-            <div class="card-form orange">
-                <h3>3. Tambah Program Kerja Baru (Tabel)</h3>
-                <form id="form-tabel" onsubmit="tambahTabel(event)">
+            <div class="card-form blue">
+                <h3>2. Input Dokumentasi Kegiatan</h3>
+                <form id="form-dokumentasi" onsubmit="tambahDokumentasi(event)">
                     <div class="form-group">
-                        <label>Nama Program Kegiatan</label>
-                        <input type="text" id="input-proker" class="form-control" required placeholder="Contoh: Pembangunan Jalan">
+                        <label>Link/URL Foto Kegiatan (Gunakan tautan gambar online)</label>
+                        <input type="text" id="input-img-url" class="form-control" required placeholder="Contoh: https://picsum.photos/300/200">
+                    </div>
+                    <div class="form-group">
+                        <label>Judul / Nama Kegiatan Fisik</label>
+                        <input type="text" id="input-img-title" class="form-control" required placeholder="Contoh: Pembangunan Rabat Beton Dusun II">
+                    </div>
+                    <button type="submit" class="btn-simpan btn-blue">Tambah Ke Galeri Dokumentasi</button>
+                </form>
+                <div class="list-preview" id="preview-dokumentasi">
+                    </div>
+            </div>
+
+            <div class="card-form orange">
+                <h3>3. Input Realisasi Anggaran (Tabel Proker)</h3>
+                <form id="form-tabel" onsubmit="tambahTabelProker(event)">
+                    <div class="form-group">
+                        <label>Nama Program Kegiatan Desa</label>
+                        <input type="text" id="input-proker" class="form-control" required placeholder="Contoh: Pengadaan Sumur Bor Air Bersih">
                     </div>
                     <div class="form-group">
                         <label>Anggaran Pagu (Rp)</label>
-                        <input type="text" id="input-anggaran" class="form-control" required placeholder="Contoh: Rp 200.000.000">
+                        <input type="text" id="input-anggaran" class="form-control" required placeholder="Contoh: Rp 300.000.000">
                     </div>
                     <div class="form-group">
                         <label>Realisasi Saldo (Rp)</label>
-                        <input type="text" id="input-realisasi" class="form-control" required placeholder="Contoh: Rp 200.000.000">
+                        <input type="text" id="input-realisasi" class="form-control" required placeholder="Contoh: Rp 150.000.000">
                     </div>
                     <div class="form-group">
                         <label>Status Kerja</label>
@@ -110,61 +114,138 @@
                             <option value="Pengerjaan">Pengerjaan</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn-simpan" style="background:#f59e0b;">Tambah Ke Tabel</button>
+                    <button type="submit" class="btn-simpan btn-orange">Tambah Ke Tabel Realisasi</button>
                 </form>
+                <div class="list-preview" id="preview-tabel">
+                    </div>
+            </div>
+
+            <div class="card-form red" style="border-top-color: #ef4444;">
+                <h3>4. Kotak Aduan Masuk dari Warga</h3>
+                <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">Daftar aspirasi dan keluhan yang dikirimkan oleh warga melalui halaman aduan.</p>
+                <div class="list-preview" id="preview-aduan" style="max-height: 280px; background: #fff1f2;">
+                    </div>
             </div>
 
         </div>
     </div>
 
-    <!-- --- LOGICA PENYIMPANAN DATA (LOCALSTORAGE) --- -->
     <script>
-        // Memuat data lama saat halaman admin dibuka agar inputan tidak kosong
         window.onload = function() {
-            if(localStorage.getItem('penduduk')) document.getElementById('input-penduduk').value = localStorage.getItem('penduduk');
-            if(localStorage.getItem('dusun')) document.getElementById('input-dusun').value = localStorage.getItem('dusun');
-            if(localStorage.getItem('pagu')) document.getElementById('input-pagu').value = localStorage.getItem('pagu');
-            if(localStorage.getItem('persen')) document.getElementById('input-persen').value = localStorage.getItem('persen');
-            
+            // Load data profil lama jika ada
+            if(localStorage.getItem('visi')) document.getElementById('input-visi').value = localStorage.getItem('visi');
             if(localStorage.getItem('kades')) document.getElementById('input-kades').value = localStorage.getItem('kades');
             if(localStorage.getItem('bakti')) document.getElementById('input-bakti').value = localStorage.getItem('bakti');
-            if(localStorage.getItem('visi')) document.getElementById('input-visi').value = localStorage.getItem('visi');
+            
+            // Tampilkan list preview galeri, tabel, dan aduan
+            renderPreviewGaleri();
+            renderPreviewTabel();
+            renderPreviewAduan();
         };
 
-        function simpanStatistik(e) {
-            e.preventDefault();
-            localStorage.setItem('penduduk', document.getElementById('input-penduduk').value);
-            localStorage.setItem('dusun', document.getElementById('input-dusun').value);
-            localStorage.setItem('pagu', document.getElementById('input-pagu').value);
-            localStorage.setItem('persen', document.getElementById('input-persen').value);
-            alert("Statistik Beranda Berhasil Diperbarui!");
-        }
-
+        // 1. Simpan Profil Desa
         function simpanProfil(e) {
             e.preventDefault();
+            localStorage.setItem('visi', document.getElementById('input-visi').value);
             localStorage.setItem('kades', document.getElementById('input-kades').value);
             localStorage.setItem('bakti', document.getElementById('input-bakti').value);
-            localStorage.setItem('visi', document.getElementById('input-visi').value);
-            alert("Profil Desa Berhasil Diperbarui!");
+            alert("✅ Profil, Visi & Misi Desa berhasil diperbarui!");
         }
 
-        function tambahTabel(e) {
+        // 2. Tambah Galeri Dokumentasi
+        function tambahDokumentasi(e) {
             e.preventDefault();
-            // Mengambil daftar list tabel lama (jika ada)
-            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
+            let listGaleri = JSON.parse(localStorage.getItem('dataGaleriDesa')) || [];
+            let dataBaru = {
+                url: document.getElementById('input-img-url').value,
+                title: document.getElementById('input-img-title').value
+            };
+            listGaleri.push(dataBaru);
+            localStorage.setItem('dataGaleriDesa', JSON.stringify(listGaleri));
             
+            alert("✅ Foto kegiatan berhasil ditambahkan ke Dokumentasi!");
+            document.getElementById('form-dokumentasi').reset();
+            renderPreviewGaleri();
+        }
+
+        function renderPreviewGaleri() {
+            let listGaleri = JSON.parse(localStorage.getItem('dataGaleriDesa')) || [];
+            let container = document.getElementById('preview-dokumentasi');
+            container.innerHTML = listGaleri.length === 0 ? "<span style='color:#94a3b8; font-size:12px;'>Belum ada dokumentasi tambahan.</span>" : "";
+            listGaleri.forEach((item, index) => {
+                container.innerHTML += `<div class="preview-item">
+                    <span>🖼️ ${item.title}</span>
+                    <button class="btn-hapus" onclick="hapusGaleri(${index})">Hapus</button>
+                </div>`;
+            });
+        }
+
+        function hapusGaleri(index) {
+            let listGaleri = JSON.parse(localStorage.getItem('dataGaleriDesa')) || [];
+            listGaleri.splice(index, 1);
+            localStorage.setItem('dataGaleriDesa', JSON.stringify(listGaleri));
+            renderPreviewGaleri();
+        }
+
+        // 3. Tambah Tabel Realisasi Proker
+        function tambahTabelProker(e) {
+            e.preventDefault();
+            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
             let dataBaru = {
                 nama: document.getElementById('input-proker').value,
                 pagu: document.getElementById('input-anggaran').value,
                 realisasi: document.getElementById('input-realisasi').value,
                 status: document.getElementById('input-status').value
             };
-            
             listTabel.push(dataBaru);
             localStorage.setItem('dataTabelProker', JSON.stringify(listTabel));
             
-            alert("Program Kerja Baru Berhasil Ditambahkan ke Tabel!");
+            alert("✅ Program kerja baru berhasil ditambahkan ke tabel!");
             document.getElementById('form-tabel').reset();
+            renderPreviewTabel();
+        }
+
+        function renderPreviewTabel() {
+            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
+            let container = document.getElementById('preview-tabel');
+            container.innerHTML = listTabel.length === 0 ? "<span style='color:#94a3b8; font-size:12px;'>Belum ada program kerja tambahan.</span>" : "";
+            listTabel.forEach((item, index) => {
+                container.innerHTML += `<div class="preview-item">
+                    <span>📊 ${item.nama} (${item.pagu})</span>
+                    <button class="btn-hapus" onclick="hapusTabel(${index})">Hapus</button>
+                </div>`;
+            });
+        }
+
+        function hapusTabel(index) {
+            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
+            listTabel.splice(index, 1);
+            localStorage.setItem('dataTabelProker', JSON.stringify(listTabel));
+            renderPreviewTabel();
+        }
+
+        // 4. Render Kotak Aduan yang dikirim warga dari index.html
+        function renderPreviewAduan() {
+            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
+            let container = document.getElementById('preview-aduan');
+            container.innerHTML = listAduan.length === 0 ? "<span style='color:#94a3b8; font-size:12px;'>Belum ada laporan aduan dari warga.</span>" : "";
+            listAduan.reverse().forEach((item, index) => {
+                container.innerHTML += `<div class="preview-item" style="flex-direction: column; gap: 3px; background: white; padding: 8px; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid #ef4444;">
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; color:#1e293b;">
+                        <span>🎫 ${item.tiket} - ${item.nama}</span>
+                        <button class="btn-hapus" onclick="hapusAduan(${listAduan.length - 1 - index})">Hapus</button>
+                    </div>
+                    <div style="font-size:11px; color:#64748b;">📞 WA: ${item.whatsapp}</div>
+                    <p style="color:#334155; margin-top:2px;">"${item.isi}"</p>
+                </div>`;
+            });
+        }
+
+        function hapusAduan(index) {
+            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
+            listAduan.splice(index, 1);
+            localStorage.setItem('databaseAduanWarga', JSON.stringify(listAduan));
+            renderPreviewAduan();
         }
     </script>
 </body>
