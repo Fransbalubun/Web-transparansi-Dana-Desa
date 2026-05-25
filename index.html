@@ -24,7 +24,8 @@
         .nav-link { display: inline-block; padding: 14px 20px; color: #cbd5e1; text-decoration: none; cursor: pointer; font-size: 14px; font-weight: 500; }
         .nav-link:hover { background: #334155; color: white; }
         .nav-link.active { background: #10b981; color: white; font-weight: bold; }
-        .nav-admin { background: #2563eb; color: white !important; margin-left: auto; }
+        .nav-admin { background: #e11d48; color: white !important; margin-left: auto; }
+        .nav-admin:hover { background: #be123c; }
 
         /* --- LAYOUT UTAMA --- */
         main { padding: 30px 0; min-height: 70vh; }
@@ -43,10 +44,11 @@
         .card-stat.red { border-top-color: #ef4444; }
         .stat-val { font-size: 18px; font-weight: bold; margin-top: 5px; color: #1e293b; }
 
-        /* --- GRAFIK BATANG & PIE (MURNI CSS SVG) --- */
+        /* --- GRID DOKUMENTASI & GRAFIK --- */
         .grid-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .chart-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
         .chart-svg { width: 100%; max-width: 300px; height: 160px; margin: 15px auto; }
+        .img-galeri { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; background: #cbd5e1; }
 
         /* --- TABEL REALISASI --- */
         .table-container { background: white; border-radius: 8px; overflow-x: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -116,7 +118,7 @@
                 <div class="card-stat blue"><div>Jumlah Dusun</div><div class="stat-val">5 Dusun</div></div>
                 <div class="card-stat"><div>Dana Desa</div><div class="stat-val" style="color:#10b981;">1,25 Milyar</div></div>
                 <div class="card-stat orange"><div>Realisasi</div><div class="stat-val" style="color:#f59e0b;">68%</div></div>
-                <div class="card-stat red"><div>Total Aduan</div><div class="stat-val" style="color:#ef4444;">14 Kasus</div></div>
+                <div class="card-stat red"><div>Total Aduan</div><div class="stat-val" style="color:#ef4444;" id="stat-total-aduan">0 Kasus</div></div>
             </div>
         </section>
 
@@ -124,21 +126,22 @@
             <div class="section-title">Profil & Struktur Desa</div>
             <div class="chart-box" style="text-align: left; margin-bottom: 20px;">
                 <h4 style="color: #10b981; margin-bottom: 5px;">Visi Pemerintah Desa</h4>
-                <p style="font-style: italic;">"Mewujudkan infrastruktur desa unggul, transparan, mandiri ekonomi, dan religius melalui sinergi masyarakat."</p>
-                <h4 style="color: #10b981; margin-top: 15px; margin-bottom: 5px;">Kepala Desa Terpilih</h4>
-                <p><strong>Bpk. H. Supriyanto</strong> (Masa Bakti: 2021 - 2027)</p>
+                <p id="txt-visi" style="font-style: italic;">"Mewujudkan infrastruktur desa unggul, transparan, mandiri ekonomi, dan religius melalui sinergi masyarakat."</p>
+                
+                <h4 style="color: #10b981; margin-top: 25px; margin-bottom: 5px;">Kepala Desa Terpilih</h4>
+                <p id="txt-kades"><strong>Bpk. H. Supriyanto</strong> (Masa Bakti: 2021 - 2027)</p>
             </div>
         </section>
 
         <section id="page-dokumentasi" class="page-content">
             <div class="section-title">Dokumentasi & Galeri Realisasi Fisik</div>
-            <div class="grid-charts">
+            <div class="grid-charts" id="container-galeri">
                 <div class="chart-box">
-                    <div style="background: #cbd5e1; height: 140px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #64748b;">[ FOTO JALAN BETON ]</div>
+                    <img src="https://picsum.photos/id/101/300/200" class="img-galeri">
                     <p style="font-weight: bold; margin-top: 10px; font-size: 14px;">Pembangunan Rabat Beton Dusun II</p>
                 </div>
                 <div class="chart-box">
-                    <div style="background: #cbd5e1; height: 140px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #64748b;">[ FOTO PELATIHAN UMKM ]</div>
+                    <img src="https://picsum.photos/id/102/300/200" class="img-galeri">
                     <p style="font-weight: bold; margin-top: 10px; font-size: 14px;">Pemberdayaan Kelompok Tani Wanita</p>
                 </div>
             </div>
@@ -177,7 +180,7 @@
             </div>
 
             <div class="table-container">
-                <table>
+                <table id="tabel-proker-main">
                     <thead>
                         <tr>
                             <th>Nama Program Kegiatan Desa</th>
@@ -193,12 +196,6 @@
                             <td>Rp 450.000.000</td>
                             <td><span class="badge bg-success">Selesai 100%</span></td>
                         </tr>
-                        <tr>
-                            <td><strong>Pengadaan Sumur Bor Air Bersih Pertanian</strong></td>
-                            <td>Rp 300.000.000</td>
-                            <td>Rp 150.000.000</td>
-                            <td><span class="badge bg-warning">Pengerjaan</span></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -209,18 +206,18 @@
             <div class="grid-charts">
                 <div class="chart-box" style="text-align: left;">
                     <h4 style="margin-bottom: 15px;">Formulir Laporan Baru</h4>
-                    <form onsubmit="prosesAduanWarga(event)">
+                    <form onsubmit="kirimAduanWargaKeAdmin(event)">
                         <div class="form-group">
                             <label>Nama Lengkap Pelapor</label>
-                            <input type="text" class="form-control" required id="namaPelapor">
+                            <input type="text" class="form-control" required id="aduan-nama">
                         </div>
                         <div class="form-group">
                             <label>Nomor WhatsApp Aktif</label>
-                            <input type="tel" class="form-control" required>
+                            <input type="tel" class="form-control" required id="aduan-wa" placeholder="Contoh: 08123456789">
                         </div>
                         <div class="form-group">
                             <label>Uraian Detail Keluhan/Aspirasi</label>
-                            <textarea class="form-control" rows="3" required></textarea>
+                            <textarea class="form-control" rows="3" required id="aduan-isi" placeholder="Ketik laporan Anda di sini..."></textarea>
                         </div>
                         <button type="submit" class="btn">Kirim Aduan Sekarang</button>
                     </form>
@@ -237,15 +234,6 @@
             </div>
         </section>
 
-        <section id="page-admin" class="page-content">
-            <div class="section-title" style="border-left-color: #ef4444;">Ruang Administrator Desa</div>
-            <div class="chart-box" style="background: #fff1f2; border: 1px solid #fecdd3; text-align: left;">
-                <h4 style="color: #e11d48;">Sistem Kontrol Internal Terkunci</h4>
-                <p style="font-size: 13px; margin: 5px 0 15px 0;">Sistem login backend terintegrasi database MySQL untuk manajemen dokumen RKP, Berita, dan verifikasi aduan.</p>
-                <button class="btn" style="background: #e11d48; width: auto;">Masuk Ke Database Utama 🔐</button>
-            </div>
-        </section>
-
     </main>
 
     <footer>
@@ -256,7 +244,7 @@
             </div>
             <div>
                 <div class="footer-title">Hubungi Kami via Email</div>
-                <p>Sekretariat: sekdes@majustransparan.desa.id<br>Layanan Pengaduan: aduan@majustransparan.desa.id</p>
+                <p>Sekretariat: sekdes@majustransparan.desa.id</p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -265,91 +253,130 @@
     </footer>
 
     <script>
-        // Fungsi perpindahan halaman murni lokal
-        
-        function gantiHalaman(idHalaman) {
-    // 1. JIKA USER KLIK MENU ADMIN, MINTA PASSWORD RAHASIA
-        if (idHalaman === 'admin') {
-            var password = prompt("Masukkan Password Administrator Desa:");
-            
-            // Anda bisa mengganti password "desa2026" di bawah ini dengan kata lain
-            if (password === "desa") { 
-                alert("Login Berhasil! Selamat datang Admin.");
-                // Jika sukses, buka halaman admin.html
-                window.location.href = "./admin.html"; 
-                return;
-            } else {
-                alert("Password Salah! Akses ke Panel Admin ditolak.");
-                return; // Gagalkan perpindahan halaman
+        // Memuat semua database dinamis dari localStorage saat web dibuka
+        window.onload = function() {
+            // 1. Sinkronisasi Profil Desa
+            if(localStorage.getItem('visi')) {
+                document.getElementById('txt-visi').innerText = `"${localStorage.getItem('visi')}"`;
             }
-        }
+            if(localStorage.getItem('kades') && localStorage.getItem('bakti')) {
+                document.getElementById('txt-kades').innerHTML = `<strong>${localStorage.getItem('kades')}</strong> (Masa Bakti: ${localStorage.getItem('bakti')})`;
+            }
 
-    // 2. LOGIKA NAVIGASI TAB BIASA (Untuk Beranda, Profil, dll)
-    var elemenHalaman = document.getElementsByClassName('page-content');
-    for (var i = 0; i < elemenHalaman.length; i++) {
-        elemenHalaman[i].classList.remove('active');
-    }
+            // 2. Sinkronisasi Galeri Dokumentasi Kegiatan
+            let listGaleri = JSON.parse(localStorage.getItem('dataGaleriDesa')) || [];
+            if(listGaleri.length > 0) {
+                let galeriContainer = document.getElementById('container-galeri');
+                galeriContainer.innerHTML = ""; // Bersihkan template lama
+                listGaleri.forEach(item => {
+                    galeriContainer.innerHTML += `<div class="chart-box">
+                        <img src="${item.url}" class="img-galeri" onerror="this.src='https://picsum.photos/300/200'">
+                        <p style="font-weight: bold; margin-top: 10px; font-size: 14px;">${item.title}</p>
+                    </div>`;
+                });
+            }
 
-    var elemenMenu = document.getElementsByClassName('nav-link');
-    for (var j = 0; j < elemenMenu.length; j++) {
-        elemenMenu[j].classList.remove('active');
-    }
+            // 3. Sinkronisasi Tabel Realisasi Proker
+            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
+            let tbody = document.querySelector('#tabel-proker-main tbody');
+            listTabel.forEach(item => {
+                let warnaBadge = item.status === 'Selesai 100%' ? 'bg-success' : 'bg-warning';
+                tbody.innerHTML += `<tr>
+                    <td><strong>${item.nama}</strong></td>
+                    <td>${item.pagu}</td>
+                    <td>${item.realisasi}</td>
+                    <td><span class="badge ${warnaBadge}">${item.status}</span></td>
+                </tr>`;
+            });
 
-    document.getElementById('page-' + idHalaman).classList.add('active');
-    document.getElementById('tab-' + idHalaman).classList.add('active');
-}
+            // 4. Update Total Angka Aduan di Beranda
+            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
+            document.getElementById('stat-total-aduan').innerText = listAduan.length + " Kasus";
+        };
 
-        // Fungsi Simulasi Submit Formulir Aduan
-        function prosesAduanWarga(event) {
+        // Fungsi Kirim Aduan Nyata dari Warga ke Admin Panel
+        function kirimAduanWargaKeAdmin(event) {
             event.preventDefault();
-            var kodeAcak = 'TR-' + Math.floor(1000 + Math.random() * 9000);
-            alert("Terima kasih, laporan Anda telah diterima sistem desa.\n\nSIMPAN NOMOR TIKET ANDA: " + kodeAcak);
-            document.getElementById('noTiketInput').value = kodeAcak;
-            document.getElementById('namaPelapor').value = "";
+            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
+            let tiketBaru = 'TR-' + Math.floor(1000 + Math.random() * 9000);
+
+            let dataAduan = {
+                tiket: tiketBaru,
+                nama: document.getElementById('aduan-nama').value,
+                whatsapp: document.getElementById('aduan-wa').value,
+                isi: document.getElementById('aduan-isi').value
+            };
+
+            listAduan.push(dataAduan);
+            localStorage.setItem('databaseAduanWarga', JSON.stringify(listAduan));
+
+            alert("✅ Aduan sukses terkirim ke Balai Desa!\n\nCATAT NOMOR TIKET ANDA: " + tiketBaru);
+            document.getElementById('noTiketInput').value = tiketBaru;
+            
+            // Reset Form inputan
+            document.getElementById('aduan-nama').value = "";
+            document.getElementById('aduan-wa').value = "";
+            document.getElementById('aduan-isi').value = "";
+            
             lacakLaporanWarga();
+            // Perbarui Counter Kasus di Beranda secara realtime
+            document.getElementById('stat-total-aduan').innerText = listAduan.length + " Kasus";
         }
 
-        // Fungsi Simulasi Tracking Tiket Laporan
+        // Fungsi Lacak Status Tiket
         function lacakLaporanWarga() {
-            var tiket = document.getElementById('noTiketInput').value;
-            if(tiket.trim() === "") {
-                alert("Masukkan nomor tiket laporan terlebih dahulu!");
+            var tiket = document.getElementById('noTiketInput').value.trim();
+            if(!tiket) {
+                alert("Masukkan nomor tiket laporan!");
                 return;
             }
+            
+            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
+            // Cari apakah tiket terdaftar di database localStorage
+            let ditemukan = listAduan.find(item => item.tiket.toLowerCase() === tiket.toLowerCase());
+
             var box = document.getElementById('statusBox');
             box.style.display = "block";
-            box.innerHTML = "<strong>ID Tiket: " + tiket + "</strong><br>Status: <span style='background:#f59e0b; color:white; padding:1px 5px; border-radius:3px; font-size:11px; font-weight:bold;'>DIPROSES</span><br><p style='margin-top:5px; font-size:12px; color:#334155;'>Keterangan: Berkas pengaduan sudah masuk ke sistem administrasi dan sedang divalidasi oleh Badan Permusyawaratan Desa (BPD).</p>";
+
+            if(ditemukan) {
+                box.innerHTML = `<strong>ID Tiket: ${ditemukan.tiket}</strong><br>
+                                 Pengirim: <span>${ditemukan.nama}</span><br>
+                                 Status: <span class='badge bg-warning'>DIPROSES BALAI DESA</span><br>
+                                 <p style='margin-top:5px; font-size:12px; color:#334155;'>Laporan Anda sudah diverifikasi oleh admin panel dan masuk antrean pengecekan fisik BPD Desa.</p>`;
+            } else {
+                box.innerHTML = `<strong style='color:#ef4444;'>Tiket Tidak Ditemukan</strong><br>
+                                 <p style='font-size:12px; color:#64748b;'>Pastikan format nomor tiket benar (Contoh: TR-1234).</p>`;
+            }
         }
-        
-        ///////
-                // --- SCRIPT TAMBAHAN UNTUK INDEX.HTML AGAR DINAMIS ---
-        // 1. Membaca Update Statistik
-        if(localStorage.getItem('penduduk')) document.querySelector('.grid-stats .card-stat:nth-child(1) .stat-val').innerText = localStorage.getItem('penduduk');
-        if(localStorage.getItem('dusun')) document.querySelector('.grid-stats .card-stat:nth-child(2) .stat-val').innerText = localStorage.getItem('dusun');
-        if(localStorage.getItem('pagu')) document.querySelector('.grid-stats .card-stat:nth-child(3) .stat-val').innerText = localStorage.getItem('pagu');
-        if(localStorage.getItem('persen')) document.querySelector('.grid-stats .card-stat:nth-child(4) .stat-val').innerText = localStorage.getItem('persen');
-        
-        // 2. Membaca Update Profil & Visi Misi
-        if(localStorage.getItem('visi')) document.querySelector('#page-profil p').innerText = `"${localStorage.getItem('visi')}"`;
-        if(localStorage.getItem('kades') && localStorage.getItem('bakti')) {
-            document.querySelector('#page-profil p:last-child').innerHTML = `<strong>${localStorage.getItem('kades')}</strong> (Masa Bakti: ${localStorage.getItem('bakti')})`;
+
+        // Fungsi Navigasi Tab & Sistem Login Pengalihan Ke File admin.html
+        function gantiHalaman(idHalaman) {
+            if (idHalaman === 'admin') {
+                var password = prompt("Masukkan Password Administrator Desa:");
+                if (password === "desa2026") { 
+                    alert("Login Berhasil! Selamat datang Admin.");
+                    window.location.href = "admin.html"; // Mencari file admin.html di folder repository yang sama
+                    return;
+                } else if(password !== null) {
+                    alert("Password Salah! Akses ke Panel Admin ditolak.");
+                    return;
+                }
+                return;
+            }
+
+            var elemenHalaman = document.getElementsByClassName('page-content');
+            for (var i = 0; i < elemenHalaman.length; i++) {
+                elemenHalaman[i].classList.remove('active');
+            }
+
+            var elemenMenu = document.getElementsByClassName('nav-link');
+            for (var j = 0; j < elemenMenu.length; j++) {
+                elemenMenu[j].classList.remove('active');
+            }
+
+            document.getElementById('page-' + idHalaman).classList.add('active');
+            document.getElementById('tab-' + idHalaman).classList.add('active');
         }
-        
-        // 3. Membaca Tambahan Baris Tabel Realisasi Anggaran
-        let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
-        let tbody = document.querySelector('table tbody');
-        listTabel.forEach(item => {
-            let warnaBadge = item.status === 'Selesai 100%' ? 'bg-success' : 'bg-warning';
-            let barisBaru = `<tr>
-                <td><strong>${item.nama}</strong></td>
-                <td>${item.pagu}</td>
-                <td>${item.realisasi}</td>
-                <td><span class="badge ${warnaBadge}">${item.status}</span></td>
-            </tr>`;
-            tbody.innerHTML += barisBaru;
-        });
-        // -----------------------------------------------------
-        
     </script>
 </body>
 </html>
