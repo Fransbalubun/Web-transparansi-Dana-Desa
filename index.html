@@ -1,382 +1,1917 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transparansi Dana Desa Maju Jaya</title>
-    <style>
-        /* --- STYLES DASAR --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #f1f5f9; color: #334155; line-height: 1.5; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Resmi Pemerintah Desa Maju Jaya</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf-plugin-autotable.min.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyD4K2VmW2YpCwcFP3hf8bNha0e8QFoByEk",
+        authDomain: "website-transparansi-dana-desa.firebaseapp.com",
+        databaseURL: "https://website-transparansi-dana-desa-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "website-transparansi-dana-desa",
+        storageBucket: "website-transparansi-dana-desa.firebasestorage.app",
+        messagingSenderId: "517937190530",
+        appId: "1:517937190530:web:6e7bab16de9df63245469b",
+        measurementId: "G-76XE1JBJ5M"
+      };
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      const dbRealtime = firebase.database();
+    </script>
+  
+  <style>
+    /* =====================================================================
+   KUNCI FINAl CSS AKORDEON BERLAPIS (DIPAKSA TERTUTUP TOTAL DI AWAL)
+   ===================================================================== */
+    
+    .rotate-icon {
+        transition: transform 0.3s ease;
+    }
+  </style>
+  
 
-        /* --- HEADER & BRANDING --- */
-        header { background: #ffffff; padding: 15px 0; border-bottom: 3px solid #10b981; }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { background: #10b981; color: white; padding: 8px 12px; border-radius: 50%; font-weight: bold; font-size: 20px; }
-        .slogan { font-size: 12px; color: #10b981; font-style: italic; font-weight: bold; }
-        .search-box input { padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; width: 200px; }
-
-        /* --- NAVIGASI BAR --- */
-        nav { background: #1e293b; overflow-x: auto; white-space: nowrap; }
-        .nav-container { display: flex; list-style: none; }
-        .nav-link { display: inline-block; padding: 14px 20px; color: #cbd5e1; text-decoration: none; cursor: pointer; font-size: 14px; font-weight: 500; }
-        .nav-link:hover { background: #334155; color: white; }
-        .nav-link.active { background: #10b981; color: white; font-weight: bold; }
-        .nav-admin { background: #e11d48; color: white !important; margin-left: auto; }
-        .nav-admin:hover { background: #be123c; }
-
-        /* --- LAYOUT UTAMA --- */
-        main { padding: 30px 0; min-height: 70vh; }
-        .page-content { display: none; }
-        .page-content.active { display: block; }
-
-        /* --- HERO & KARTU STATISTIK --- */
-        .hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 50px 30px; border-radius: 12px; text-align: center; margin-bottom: 30px; }
-        .hero h2 { font-size: 28px; margin-bottom: 10px; color: #10b981; }
-        .section-title { font-size: 20px; font-weight: bold; margin-bottom: 20px; border-left: 5px solid #10b981; padding-left: 10px; }
-        
-        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .card-stat { background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid #10b981; }
-        .card-stat.blue { border-top-color: #2563eb; }
-        .card-stat.orange { border-top-color: #f59e0b; }
-        .card-stat.red { border-top-color: #ef4444; }
-        .stat-val { font-size: 18px; font-weight: bold; margin-top: 5px; color: #1e293b; }
-
-        /* --- GRID DOKUMENTASI & GRAFIK --- */
-        .grid-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .chart-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
-        .chart-svg { width: 100%; max-width: 300px; height: 160px; margin: 15px auto; }
-        .img-galeri { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; background: #cbd5e1; }
-
-        /* --- TABEL REALISASI --- */
-        .table-container { background: white; border-radius: 8px; overflow-x: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-        th { background: #334155; color: white; padding: 12px; }
-        td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
-        tr:nth-child(even) { background: #f8fafc; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; }
-        .bg-success { background: #10b981; }
-        .bg-warning { background: #f59e0b; }
-
-        /* --- FORMULIR ADUAN --- */
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
-        .btn { background: #10b981; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn:hover { background: #059669; }
-        .alert { padding: 12px; border-radius: 6px; font-size: 13px; margin-top: 15px; background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-
-        /* --- FOOTER --- */
-        footer { background: #0f172a; color: #94a3b8; padding: 30px 0 15px 0; margin-top: 50px; font-size: 13px; border-top: 4px solid #10b981; }
-        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 20px; }
-        .footer-title { color: white; font-weight: bold; margin-bottom: 10px; }
-        .footer-bottom { text-align: center; border-top: 1px solid #334155; padding-top: 15px; font-size: 12px; }
-    </style>
 </head>
-<body>
+<body class="bg-[#F8FAFC] text-slate-900">
 
-    <header>
-        <div class="container header-flex">
-            <div class="logo-area">
-                <div class="logo-icon">🇮🇩</div>
-                <div>
-                    <h1 style="font-size: 20px; color: #1e293b;">DESA MAJU JAYA</h1>
-                    <p class="slogan">"Transparansi untuk Membangun Kepercayaan Masyarakat"</p>
-                </div>
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div class="flex items-center space-x-4">
+            <div class="bg-red-600 p-2.5 rounded-xl shadow-lg shadow-red-200">
+              <i class="fas fa-landmark text-white"></i>
             </div>
-            <div class="search-box">
-                <input type="text" placeholder="Cari Dokumen APBDes...">
+            <div>
+              <h1 class="text-lg font-extrabold text-slate-800 leading-none uppercase tracking-tighter">DESA UJI COBA</h1>
+              <p class="text-[10px] text-slate-500 font-semibold tracking-[0.2em] uppercase">Portal Transparansi Desa Digital</p>
             </div>
-        </div>
-    </header>
-
-    <nav>
-        <div class="container nav-container">
-            <span class="nav-link active" id="tab-beranda" onclick="gantiHalaman('beranda')">Beranda</span>
-            <span class="nav-link" id="tab-profil" onclick="gantiHalaman('profil')">Profil Desa</span>
-            <span class="nav-link" id="tab-dokumentasi" onclick="gantiHalaman('dokumentasi')">Dokumentasi</span>
-            <span class="nav-link" id="tab-realisasi" onclick="gantiHalaman('realisasi')">Realisasi Anggaran</span>
-            <span class="nav-link" id="tab-aduan" onclick="gantiHalaman('aduan')">Aduan Warga</span>
-            <span class="nav-link nav-admin" id="tab-admin" onclick="gantiHalaman('admin')">Admin Panel 🔐</span>
+          </div>
+          <div class="hidden md:flex items-center space-x-8">
+            <a href="#" class="text-slate-600 hover:text-red-600 font-medium text-sm transition">Beranda</a>
+            <a href="javascript:void(0)" onclick="bukaHalamanProfil()" class="text-slate-600 hover:text-red-600 font-medium text-sm transition">Profil Desa</a>
+            <a href="#" onclick="bukaHalamanDokumentasi()" class="text-slate-600 hover:text-red-600 font-medium text-sm transition">Dokumentasi Kegiatan</a>
+            <a href="#" onclick="bukaModalPdf()" class="text-slate-600 hover:text-red-600 font-medium text-sm transition">Dokumen Perencanaan</a>
+            
+          <a href="javascript:void(0)" onclick="bukaModalRealisasi()" class="text-slate-600 hover:text-red-600 font-medium text-sm transition">Realisasi Dana Desa</a>
+            <a href="#pengaduan" class="text-slate-600 hover:text-red-600 font-medium text-sm transition">Aduan Masyarakat</a>
+          </div>
+          
+          <button onclick="toggleAdminModal()" class="flex items-center text-slate-500 hover:text-red-600 font-bold transition">
+          <i class="fas fa-lock-open mr-2 text-xs"></i> 
+          <span class="text-xs uppercase tracking-widest">Admin</span>
+          </button>
         </div>
     </nav>
 
-    <main class="container">
+    <section class="relative bg-slate-900 pt-32 pb-48 overflow-hidden">
+      <div class="absolute inset-0 opacity-20 pointer-events-none">
+        <div class="absolute top-0 left-0 w-96 h-96 bg-red-600 rounded-full filter blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-600 rounded-full filter blur-[120px] translate-x-1/2 translate-y-1/2"></div>
+      </div>
+      <div class="container mx-auto px-6 relative z-10 text-center">
+        <span class="inline-block bg-red-600/10 text-red-500 text-[10px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-[0.3em] mb-6 border border-red-600/20">Transparansi Publik</span>
+        <h2 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">Membangun Desa <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-400">Lebih Akuntabel.</span></h2>
+        <p class="text-slate-400 text-lg max-w-2xl mx-auto font-medium">Informasi real-time mengenai perencanaan, anggaran, dan progres pembangunan Desa Uji Coba.</p>
+      </div>
+    </section>
 
-        <section id="page-beranda" class="page-content active">
-            <div class="hero">
-                <span>PORTAL AKUNTABILITAS RESMI</span>
-                <h2>Transparansi Tata Kelola Dana Desa</h2>
-                <p style="font-size: 14px; color: #94a3b8; max-width: 600px; margin: 5px auto;">Masyarakat berhak memantau, memeriksa, dan mengawal penuh penggunaan APBDes demi pembangunan yang adil.</p>
+<main class="container mx-auto px-6 -mt-24 pb-20 relative z-20">
+
+    <section id="section-beranda" class="pt-28 pb-10 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Selamat Datang di Portal Desa</h1>
+        <p class="text-sm font-medium text-slate-500 mt-1">Sistem Informasi Transparansi dan Pelayanan Digital Terpadu.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+          
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+              <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
+                  <i class="fas fa-home text-xl"></i>
+              </div>
+              <div>
+                  <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wide">Kepala Keluarga (KK)</p>
+                  <h3 id="berandaTotalKK" class="text-2xl font-black text-slate-800 tracking-tight mt-0.5">0</h3>
+                  <p class="text-[10px] text-slate-400 font-medium mt-0.5">Keluarga Terdaftar</p>
+              </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+              <div class="p-3 bg-blue-50 text-blue-600 rounded-xl border border-blue-100">
+                  <i class="fas fa-users text-xl"></i>
+              </div>
+              <div>
+                  <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wide">Total Penduduk</p>
+                  <h3 id="berandaTotalPenduduk" class="text-2xl font-black text-slate-800 tracking-tight mt-0.5">0</h3>
+                  <p class="text-[10px] text-slate-400 font-medium mt-0.5">Jiwa Terdata</p>
+              </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+              <div class="p-3 bg-amber-50 text-amber-600 rounded-xl border border-amber-100">
+                  <i class="fas fa-wallet text-xl"></i>
+              </div>
+              <div>
+                  <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wide">Dana Desa (Pagu)</p>
+                  <h3 id="berandaPaguDanaDesa" class="text-2xl font-black text-slate-800 tracking-tight mt-0.5">Rp 0</h3>
+                  <p class="text-[10px] text-slate-400 font-medium mt-0.5">Total Anggaran</p>
+              </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+              <div class="p-3 bg-purple-50 text-purple-600 rounded-xl border border-purple-100">
+                  <i class="fas fa-chart-line text-xl"></i>
+              </div>
+              <div>
+                  <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wide">Realisasi</p>
+                  <h3 id="berandaPersenRealisasi" class="text-2xl font-black text-slate-800 tracking-tight mt-0.5">0%</h3>
+                  <p class="text-[10px] text-slate-400 font-medium mt-0.5">Kegiatan Selesai</p>
+              </div>
+          </div>
+          
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4 hover:shadow-md transition-all duration-300">
+            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-xl flex-shrink-0 shadow-inner">
+              <i class="fas fa-comments"></i>
             </div>
-
-            <div class="section-title">Dashboard Statistik Desa (2026)</div>
-            <div class="grid-stats">
-                <div class="card-stat"><div>Penduduk</div><div class="stat-val">3.421 Jiwa</div></div>
-                <div class="card-stat blue"><div>Jumlah Dusun</div><div class="stat-val">5 Dusun</div></div>
-                <div class="card-stat"><div>Dana Desa</div><div class="stat-val" style="color:#10b981;">1,25 Milyar</div></div>
-                <div class="card-stat orange"><div>Realisasi</div><div class="stat-val" style="color:#f59e0b;">68%</div></div>
-                <div class="card-stat red"><div>Total Aduan</div><div class="stat-val" style="color:#ef4444;" id="stat-total-aduan">0 Kasus</div></div>
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Aduan Masuk</p>
+              <h3 id="stat-aduan" class="text-2xl font-extrabold text-slate-800 mt-1">0</h3>
             </div>
-        </section>
-
-        <section id="page-profil" class="page-content">
-            <div class="section-title">Profil & Struktur Desa</div>
-            <div class="chart-box" style="text-align: left; margin-bottom: 20px;">
-                <h4 style="color: #10b981; margin-bottom: 5px;">Visi Pemerintah Desa</h4>
-                <p id="txt-visi" style="font-style: italic;">"Mewujudkan infrastruktur desa unggul, transparan, mandiri ekonomi, dan religius melalui sinergi masyarakat."</p>
-                
-                <h4 style="color: #10b981; margin-top: 25px; margin-bottom: 5px;">Kepala Desa Terpilih</h4>
-                <p id="txt-kades"><strong>Bpk. H. Supriyanto</strong> (Masa Bakti: 2021 - 2027)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section id="pengaduan" class="scroll-mt-32 max-w-5xl mx-auto mt-12">
+      <div class="bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row border-4 border-white">
+        <div class="md:w-2/5 bg-gradient-to-br from-red-600 to-red-800 p-12 text-white">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl mb-8">
+            <i class="fas fa-comment-dots"></i>
+          </div>
+          <h3 class="text-3xl font-black mb-4 leading-tight">Aduan & Aspirasi</h3>
+          <p class="text-red-100 font-medium opacity-80 mb-8">Sampaikan keluhan atau saran Anda. Kerahasiaan identitas pelapor terjamin sesuai protokol digital desa.</p>
+          <div class="space-y-4">
+            <div class="flex items-center space-x-3 text-sm font-bold">
+              <i class="fas fa-check-circle text-red-300"></i>
+              <span>Respon Cepat 24 Jam</span>
             </div>
-        </section>
-
-        <section id="page-dokumentasi" class="page-content">
-            <div class="section-title">Dokumentasi & Galeri Realisasi Fisik</div>
-            <div class="grid-charts" id="container-galeri">
-                <div class="chart-box">
-                    <img src="https://picsum.photos/id/101/300/200" class="img-galeri">
-                    <p style="font-weight: bold; margin-top: 10px; font-size: 14px;">Pembangunan Rabat Beton Dusun II</p>
-                </div>
-                <div class="chart-box">
-                    <img src="https://picsum.photos/id/102/300/200" class="img-galeri">
-                    <p style="font-weight: bold; margin-top: 10px; font-size: 14px;">Pemberdayaan Kelompok Tani Wanita</p>
-                </div>
+            <div class="flex items-center space-x-3 text-sm font-bold">
+              <i class="fas fa-check-circle text-red-300"></i>
+              <span>Terhubung ke WhatsApp Desa</span>
             </div>
-        </section>
+          </div>
+        </div>
+        
+        <div class="md:w-3/5 p-12 bg-white">
+        <form id="formAduanWarga" class="space-y-6">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Nama Pelapor</label>
+              <input type="text" id="namaPengadu" required class="w-full bg-slate-50 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-red-600 outline-none transition font-medium" placeholder="Nama Lengkap">
+            </div>
+            <div class="space-y-2">
+              <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">NIK (Sesuai KTP)</label>
+              <input type="number" id="nikPengadu" required class="w-full bg-slate-50 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-red-600 outline-none transition font-medium" placeholder="16 Digit NIK">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-bold mb-1">Nomor WhatsApp (Aktif)</label>
+            <input type="text" id="telpAduan" oninput="validasiNomorWA(this)" placeholder="Contoh: 08123456789" class="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-500" required>
+            <p id="pesan-error-wa" class="text-[10px] text-gray-400 mt-1 italic">Nomor akan otomatis dikonversi ke format internasional (628...)</p>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Isi Aduan</label>
+            <textarea id="isiPengaduan" rows="4" required class="w-full bg-slate-50 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-red-600 outline-none transition font-medium" placeholder="Deskripsikan pengaduan atau aspirasi Anda secara detail..."></textarea>
+          </div>
+          <button type="submit" class="bg-slate-900 hover:bg-red-600 text-white w-full py-4 rounded-2xl font-black shadow-lg shadow-slate-200 transition transform active:scale-95 flex justify-center items-center"> 
+            KIRIM ADUAN SEKARANG <i class="fas fa-paper-plane ml-3"></i>
+          </button>
+        
+          <div id="preview-container" class="mt-6 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 hidden">
+            <div class="bg-white border rounded-lg shadow-sm overflow-hidden">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-gray-100 text-gray-600 font-bold">
+                  <tr>
+                    <th class="p-2">Pengadu</th>
+                    <th class="p-2">Isi Laporan</th>
+                    <th class="p-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-t">
+                    <td class="p-2">
+                      <div id="prev-nama" class="font-bold text-slate-800">-</div>
+                      <div class="text-green-600 font-bold text-[9px]"><i class="fab fa-whatsapp"></i> Hubungi WA</div>
+                    </td>
+                    <td id="prev-isi" class="p-2 text-gray-600 italic">"-"</td>
+                    <td class="p-2">
+                      <span class="px-2 py-1 rounded-full text-[9px] font-bold bg-gray-100 text-gray-600">Diterima</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-[9px] text-gray-400 mt-2">*Laporan Anda akan tampil seperti ini di layar admin desa.</p>
+          </div>
+        </form>
+        </div>
+      </div>
+    </section>
+</main>
 
-        <section id="page-realisasi" class="page-content">
-            <div class="section-title">Grafik Alokasi & Realisasi APBDes 2026</div>
+<footer class="bg-white border-t border-slate-100 py-12">
+  <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="flex items-center space-x-3 grayscale opacity-50">
+      <div class="bg-slate-800 p-2 rounded text-white font-bold">DESA</div>
+      <h1 class="font-black text-slate-800 uppercase tracking-tighter italic">Maju Jaya</h1>
+    </div>
+    <p class="text-slate-400 text-xs font-bold">&copy; 2026 Pemerintah Desa Maju Jaya. All Rights Reserved.</p>
+  </div>
+</footer>
+
+    <div id="adminModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-[100] px-4 transition-all">
+      <div class="bg-white rounded-[2.5rem] max-w-md w-full shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+        <div class="p-10">
+          <div class="flex justify-between items-center mb-10">
+            <h2 class="text-2xl font-black text-slate-800">Admin Login</h2>
+            <button onclick="toggleAdminModal()" class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 hover:text-red-600 hover:bg-red-50 transition flex items-center justify-center text-xl">&times;</button>
+          </div>
+          <form id="loginForm" class="space-y-6 text-sm">
+            <div class="space-y-2">
+              <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Username</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-300">
+                  <i class="fas fa-user-circle"></i>
+                </span>
+                <input type="text" id="username" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-red-600 outline-none font-semibold transition" placeholder="admin_desa">
+              </div>
+            </div>
             
-            <div class="grid-charts">
-                <div class="chart-box">
-                    <h5>Alokasi vs Realisasi (Juta Rp)</h5>
-                    <svg class="chart-svg" viewBox="0 0 300 160">
-                        <rect x="30" y="30" width="25" height="110" fill="#2563eb" />
-                        <rect x="60" y="50" width="25" height="90" fill="#10b981" />
-                        <rect x="130" y="60" width="25" height="80" fill="#2563eb" />
-                        <rect x="160" y="90" width="25" height="50" fill="#10b981" />
-                        <rect x="220" y="80" width="25" height="60" fill="#2563eb" />
-                        <rect x="250" y="85" width="25" height="55" fill="#10b981" />
-                        <line x1="10" y1="140" x2="290" y2="140" stroke="#334155" stroke-width="2" />
-                    </svg>
-                    <div style="font-size: 11px; display: flex; justify-content: space-around;">
-                        <span>🔹Fisik</span><span>🔹Pemberdayaan</span><span>🔹Aparat</span>
-                    </div>
-                </div>
-
-                <div class="chart-box">
-                    <h5>Persentase Sektor Anggaran</h5>
-                    <svg class="chart-svg" viewBox="0 0 200 160">
-                        <circle cx="100" cy="80" r="50" fill="none" stroke="#10b981" stroke-width="30" stroke-dasharray="200 100" />
-                        <circle cx="100" cy="80" r="50" fill="none" stroke="#2563eb" stroke-width="30" stroke-dasharray="90 314" />
-                    </svg>
-                    <div style="font-size: 11px;">
-                        <span style="color:#10b981">■</span> Fisik (65%) | <span style="color:#2563eb">■</span> Pemberdayaan (35%)
-                    </div>
-                </div>
+            <div class="space-y-2">
+              <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Password</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-300">
+                 <i class="fas fa-key"></i>
+                </span>
+                <input type="password" id="password" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-red-600 outline-none font-semibold transition" placeholder="••••••••">
+              </div>
             </div>
-
-            <div class="table-container">
-                <table id="tabel-proker-main">
-                    <thead>
-                        <tr>
-                            <th>Nama Program Kegiatan Desa</th>
-                            <th>Anggaran Pagu</th>
-                            <th>Realisasi Saldo</th>
-                            <th>Status Kerja</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Pembangunan Jembatan Penghubung Dusun I</strong></td>
-                            <td>Rp 450.000.000</td>
-                            <td>Rp 450.000.000</td>
-                            <td><span class="badge bg-success">Selesai 100%</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="page-aduan" class="page-content">
-            <div class="section-title">Layanan Kotak Pengaduan & Aspirasi Warga</div>
-            <div class="grid-charts">
-                <div class="chart-box" style="text-align: left;">
-                    <h4 style="margin-bottom: 15px;">Formulir Laporan Baru</h4>
-                    <form onsubmit="kirimAduanWargaKeAdmin(event)">
-                        <div class="form-group">
-                            <label>Nama Lengkap Pelapor</label>
-                            <input type="text" class="form-control" required id="aduan-nama">
-                        </div>
-                        <div class="form-group">
-                            <label>Nomor WhatsApp Aktif</label>
-                            <input type="tel" class="form-control" required id="aduan-wa" placeholder="Contoh: 08123456789">
-                        </div>
-                        <div class="form-group">
-                            <label>Uraian Detail Keluhan/Aspirasi</label>
-                            <textarea class="form-control" rows="3" required id="aduan-isi" placeholder="Ketik laporan Anda di sini..."></textarea>
-                        </div>
-                        <button type="submit" class="btn">Kirim Aduan Sekarang</button>
-                    </form>
-                </div>
-
-                <div class="chart-box">
-                    <h4>Cek Status Pengaduan</h4>
-                    <p style="font-size: 12px; color:#64748b; margin-bottom: 10px;">Gunakan nomor tiket untuk melihat tindak lanjut administrasi balai desa.</p>
-                    <input type="text" id="noTiketInput" placeholder="Contoh: TR-9981" class="form-control" style="text-align: center; margin-bottom: 10px;">
-                    <button class="btn" style="background:#2563eb" onclick="lacakLaporanWarga()">Periksa Tiket</button>
-                    
-                    <div id="statusBox" class="alert" style="display: none; text-align: left;"></div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <footer>
-        <div class="container footer-grid">
-            <div>
-                <div class="footer-title">Balai Desa Maju Jaya</div>
-                <p>Kecamatan Kemakmuran, Kabupaten Sejahtera, Provinsi Indonesia.<br>Kontak Utama: +62 812-3456-7890</p>
-            </div>
-            <div>
-                <div class="footer-title">Hubungi Kami via Email</div>
-                <p>Sekretariat: sekdes@majustransparan.desa.id</p>
-            </div>
+            
+            <div id="errorMessage" class="hidden text-red-600 text-[11px] font-bold bg-red-50 p-3 rounded-xl text-center border border-red-100">Autentikasi Gagal! Periksa kembali kredensial Anda.</div>
+            
+            <button type="submit" class="bg-red-600 hover:bg-slate-900 text-white w-full py-4 rounded-2xl font-black shadow-xl shadow-red-200 hover:shadow-slate-200 transition transform active:scale-95 flex justify-center items-center">
+              MASUK DASHBOARD <i class="fas fa-chevron-right ml-3 text-xs"></i>
+            </button>
+          </form>
         </div>
-        <div class="footer-bottom">
-            &copy; 2026 Pemerintah Desa Maju Jaya. Seluruh Hak Cipta Dilindungi Undang-Undang.
+      </div>
+    </div>
+    
+    <div id="halaman-dokumentasi-full" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 hidden flex justify-end transition-opacity duration-300">
+      <div class="bg-slate-50 w-full h-full shadow-2xl flex flex-col transition-all duration-300">
+        <div class="p-4 sm:p-6 bg-white border-b border-slate-200 flex justify-between items-center flex-shrink-0 w-full">
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <div class="p-2 bg-red-50 text-red-600 rounded-xl border border-red-100 flex-shrink-0">
+              <i class="fas fa-images text-base sm:text-lg"></i>
+            </div>
+            <div class="overflow-hidden">
+              <h2 class="text-lg sm:text-xl font-bold text-slate-800 truncate">Dokumentasi & Kegiatan Desa</h2>
+              <p class="text-[11px] sm:text-xs text-slate-400 truncate">Koleksi album foto pelaksanaan program dan transparansi pembangunan ohoi</p>
+            </div>
+          </div>
+          <button onclick="tutupHalamanDokumentasi()" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition flex-shrink-0">
+           <i class="fas fa-times text-base sm:text-lg"></i>
+          </button>
         </div>
-    </footer>
+        
+        <div class="p-4 sm:p-6 md:p-8 overflow-y-auto flex-1 bg-slate-100/50 flex justify-center">
+          <div id="gridDokumentasiKhusus" class="grid grid-cols-1 gap-6 sm:gap-8 w-full max-w-7xl mx-auto">
+          </div>
+        </div>
+    
+      </div>
+    </div>
+
+    <div id="modal-preview-foto" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4 transition-opacity duration-300">
+      <button onclick="tutupPreviewFoto()" class="absolute top-4 right-4 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition z-10">
+       <i class="fas fa-times text-xl"></i>
+      </button>
+      <div class="max-w-full max-h-full flex flex-col items-center justify-center">
+        <img id="foto-preview-full" src="" alt="Preview Dokumentasi" class="max-w-full max-h-[85vh] md:max-h-[90vh] object-contain rounded-lg shadow-2xl animate-[zoomIn_0.2s_ease-out]">
+        <p id="teks-preview-full" class="text-white/90 text-sm md:text-base mt-4 text-center max-w-2xl bg-black/40 px-4 py-2 rounded-xl italic"></p>
+      </div>
+    </div>
+
+    <style>
+      @keyframes zoomIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+    </style>
+
+    <div id="debugBox" style="position:fixed; bottom:10px; left:10px; background:#000; color:#0f0; padding:10px;"></div>
 
     <script>
-        // Memuat semua database dinamis dari localStorage saat web dibuka
-        window.onload = function() {
-            // 1. Sinkronisasi Profil Desa
-            if(localStorage.getItem('visi')) {
-                document.getElementById('txt-visi').innerText = `"${localStorage.getItem('visi')}"`;
-            }
-            if(localStorage.getItem('kades') && localStorage.getItem('bakti')) {
-                document.getElementById('txt-kades').innerHTML = `<strong>${localStorage.getItem('kades')}</strong> (Masa Bakti: ${localStorage.getItem('bakti')})`;
-            }
-
-            // 2. Sinkronisasi Galeri Dokumentasi Kegiatan
-            let listGaleri = JSON.parse(localStorage.getItem('dataGaleriDesa')) || [];
-            if(listGaleri.length > 0) {
-                let galeriContainer = document.getElementById('container-galeri');
-                galeriContainer.innerHTML = ""; // Bersihkan template lama
-                listGaleri.forEach(item => {
-                    galeriContainer.innerHTML += `<div class="chart-box">
-                        <img src="${item.url}" class="img-galeri" onerror="this.src='https://picsum.photos/300/200'">
-                        <p style="font-weight: bold; margin-top: 10px; font-size: 14px;">${item.title}</p>
-                    </div>`;
-                });
-            }
-
-            // 3. Sinkronisasi Tabel Realisasi Proker
-            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
-            let tbody = document.querySelector('#tabel-proker-main tbody');
-            listTabel.forEach(item => {
-                let warnaBadge = item.status === 'Selesai 100%' ? 'bg-success' : 'bg-warning';
-                tbody.innerHTML += `<tr>
-                    <td><strong>${item.nama}</strong></td>
-                    <td>${item.pagu}</td>
-                    <td>${item.realisasi}</td>
-                    <td><span class="badge ${warnaBadge}">${item.status}</span></td>
-                </tr>`;
-            });
-
-            // 4. Update Total Angka Aduan di Beranda
-            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
-            document.getElementById('stat-total-aduan').innerText = listAduan.length + " Kasus";
-        };
-
-        // Fungsi Kirim Aduan Nyata dari Warga ke Admin Panel
-        function kirimAduanWargaKeAdmin(event) {
-            event.preventDefault();
-            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
-            let tiketBaru = 'TR-' + Math.floor(1000 + Math.random() * 9000);
-
-            let dataAduan = {
-                tiket: tiketBaru,
-                nama: document.getElementById('aduan-nama').value,
-                whatsapp: document.getElementById('aduan-wa').value,
-                isi: document.getElementById('aduan-isi').value
-            };
-
-            listAduan.push(dataAduan);
-            localStorage.setItem('databaseAduanWarga', JSON.stringify(listAduan));
-
-            alert("✅ Aduan sukses terkirim ke Balai Desa!\n\nCATAT NOMOR TIKET ANDA: " + tiketBaru);
-            document.getElementById('noTiketInput').value = tiketBaru;
-            
-            // Reset Form inputan
-            document.getElementById('aduan-nama').value = "";
-            document.getElementById('aduan-wa').value = "";
-            document.getElementById('aduan-isi').value = "";
-            
-            lacakLaporanWarga();
-            // Perbarui Counter Kasus di Beranda secara realtime
-            document.getElementById('stat-total-aduan').innerText = listAduan.length + " Kasus";
-        }
-
-        // Fungsi Lacak Status Tiket
-        function lacakLaporanWarga() {
-            var tiket = document.getElementById('noTiketInput').value.trim();
-            if(!tiket) {
-                alert("Masukkan nomor tiket laporan!");
-                return;
-            }
-            
-            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
-            // Cari apakah tiket terdaftar di database localStorage
-            let ditemukan = listAduan.find(item => item.tiket.toLowerCase() === tiket.toLowerCase());
-
-            var box = document.getElementById('statusBox');
-            box.style.display = "block";
-
-            if(ditemukan) {
-                box.innerHTML = `<strong>ID Tiket: ${ditemukan.tiket}</strong><br>
-                                 Pengirim: <span>${ditemukan.nama}</span><br>
-                                 Status: <span class='badge bg-warning'>DIPROSES BALAI DESA</span><br>
-                                 <p style='margin-top:5px; font-size:12px; color:#334155;'>Laporan Anda sudah diverifikasi oleh admin panel dan masuk antrean pengecekan fisik BPD Desa.</p>`;
-            } else {
-                box.innerHTML = `<strong style='color:#ef4444;'>Tiket Tidak Ditemukan</strong><br>
-                                 <p style='font-size:12px; color:#64748b;'>Pastikan format nomor tiket benar (Contoh: TR-1234).</p>`;
-            }
-        }
-
-        // Fungsi Navigasi Tab & Sistem Login Pengalihan Ke File admin.html
-        function gantiHalaman(idHalaman) {
-            if (idHalaman === 'admin') {
-                var password = prompt("Masukkan Password Administrator Desa:");
-                if (password === "desa2026") { 
-                    alert("Login Berhasil! Selamat datang Admin.");
-                    window.location.href = "admin.html"; // Mencari file admin.html di folder repository yang sama
-                    return;
-                } else if(password !== null) {
-                    alert("Password Salah! Akses ke Panel Admin ditolak.");
-                    return;
-                }
-                return;
-            }
-
-            var elemenHalaman = document.getElementsByClassName('page-content');
-            for (var i = 0; i < elemenHalaman.length; i++) {
-                elemenHalaman[i].classList.remove('active');
-            }
-
-            var elemenMenu = document.getElementsByClassName('nav-link');
-            for (var j = 0; j < elemenMenu.length; j++) {
-                elemenMenu[j].classList.remove('active');
-            }
-
-            document.getElementById('page-' + idHalaman).classList.add('active');
-            document.getElementById('tab-' + idHalaman).classList.add('active');
-        }
+      function log(msg) {
+        document.getElementById("debugBox").innerHTML += msg + "<br>";
+      }
+      
+      log("Login: " + localStorage.getItem("isLogin"));
     </script>
+    
+        <!-- ========================================================================= -->
+        <!-- START: MODUL DOKUMEN PERENCANAAN RESMI (HALAMAN FULL REPLIKA DOKUMENTASI)  -->
+        <!-- ========================================================================= -->
+        <div id="modalPdfWarga" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 hidden flex justify-end transition-opacity duration-300">
+          <div class="bg-slate-50 w-full h-full shadow-2xl flex flex-col transition-all duration-300">
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 max-w-7xl mx-auto my-6">
+                <h3 class="text-sm font-black text-slate-800 uppercase mb-4 flex items-center">
+                    <span class="w-2 h-3.5 bg-blue-600 rounded-sm mr-2 block"></span> Dokumen Perencanaan & APBDes Resmi
+                </h3>
+                <p class="text-xs text-slate-500 mb-3">*Klik pada baris dokumen untuk membuka dan mengunduh berkas PDF</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 font-bold uppercase border-b border-slate-200">
+                                <th class="p-3.5">Jenis Dokumen</th>
+                                <th class="p-3.5">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="daftarPdfUser">
+                            </tbody>
+                    </table>
+                </div>
+                
+            </div>
+
+
+            
+            
+        
+          </div>
+        </div>
+        <!-- ========================================================================= -->
+        <!-- END: MODUL DOKUMEN PERENCANAAN RESMI (HALAMAN FULL REPLIKA DOKUMENTASI)    -->
+        <!-- ========================================================================= -->
+
+
+    <div id="halaman-realisasi-full" class="fixed inset-0 bg-slate-50 z-[999] hidden overflow-y-auto">
+      <nav class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div class="flex items-center space-x-4">
+            <button onclick="tutupHalamanRealisasi()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-600 transition-all">
+             <i class="fas fa-arrow-left text-lg"></i>
+            </button>
+            <div>
+              <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Transparansi Realisasi Dana Desa</h2>
+              <p class="text-[11px] text-slate-400 font-medium">Laporan Akuntabilitas Aktual Publik</p>
+            </div>
+          </div>
+          <span class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+            <i class="fas fa-check-circle mr-1.5"></i>Data Terverifikasi
+          </span>
+        </div>
+      </nav>
+      
+      <div class="container mx-auto px-6 py-10 space-y-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Pendapatan Desa</p>
+              <h4 id="total-pendapatan-depan" class="text-3xl font-black text-slate-800">Rp 0</h4>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-2xl text-blue-600 text-2xl"><i class="fas fa-wallet"></i></div>
+          </div>
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Belanja Dana Desa</p>
+              <h4 id="total-rkp-depan" class="text-3xl font-black text-red-600">Rp 0</h4>
+            </div>
+            <div class="bg-red-50 p-4 rounded-2xl text-red-600 text-2xl"><i class="fas fa-file-invoice-dollar"></i></div>
+          </div>
+        </div>
+        
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 lg:col-span-1">
+            <h4 class="font-bold text-slate-800 mb-6 flex items-center">
+              <span class="w-1.5 h-5 bg-red-600 rounded-full mr-3"></span> Proporsi Dana
+            </h4>
+            <div class="relative h-[280px]">
+              <canvas id="chartAnggaran"></canvas>
+            </div>
+          </div>
+          <div class="bg-white rounded-3xl shadow-sm border border-slate-100 lg:col-span-2 overflow-hidden p-6">
+            <h4 class="font-bold text-slate-800 mb-6 flex items-center">
+              <span class="w-1.5 h-5 bg-blue-600 rounded-full mr-3"></span> Rincian Bidang Penyelenggaraan
+            </h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-100">
+                    <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Program/Kegiatan</th>
+                    <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Nilai Anggaran</th>
+                    <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="containerPerBidang" class="divide-y divide-slate-100">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid lg:grid-cols-2 gap-8">
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <h3 class="text-xl font-black text-slate-900 mb-6 flex items-center">
+             <i class="fas fa-star text-orange-400 mr-3"></i> Prioritas Utama Desa
+            </h3>
+            <div class="grid gap-4" id="containerPrioritas">
+            </div>
+          </div>
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <h3 class="text-xl font-black text-slate-900 mb-6 flex items-center">
+              <i class="fas fa-tasks text-blue-600 mr-3"></i> Progres Pelaksanaan Kegiatan
+              </h3>
+            <div class="space-y-6" id="containerProgres">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="halaman-profil-full" class="fixed inset-0 bg-slate-50 z-[999] hidden overflow-y-auto">
+      <nav class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div class="flex items-center space-x-4">
+            <button onclick="tutupHalamanProfil()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-600 transition-all">
+              <i class="fas fa-arrow-left text-lg"></i>
+            </button>
+            <div>
+              <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Profil & Kelembagaan Ohoi</h2>
+              <p class="text-[11px] text-slate-400 font-medium">Informasi Struktur Sejarah, Kebijakan, dan Aparatur</p>
+            </div>
+          </div>
+           <span class="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+            Profil Resmi
+          </span>
+        </div>
+      </nav>
+      
+      <div class="container mx-auto px-6 py-10 max-w-6xl space-y-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-4 space-y-8">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+              <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+               <span class="w-1.5 h-5 bg-blue-600 rounded-full mr-3"></span> profil Desa/Ohoi
+              </h3>
+              <p id="view-tentang-desa" class="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
+                Belum ada profil Desa/ohoi yang diisi oleh admin ohoi.
+              </p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+              <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+               <span class="w-1.5 h-5 bg-emerald-50 text-emerald-600 rounded-full mr-3"></span> Visi & Misi Kepala Ohoi
+              </h3>
+              <div id="view-visimisi" class="text-slate-600 text-sm leading-relaxed whitespace-pre-line font-medium bg-slate-50/70 p-5 rounded-2xl border border-slate-100 italic">
+                Belum ada data visi misi yang dimasukkan.
+              </div>
+            </div>
+            
+            <div class="lg:col-span-4">
+              <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 space-y-4 sticky top-24">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Bagan Struktur Organisasi</h3>
+                <div class="border rounded-2xl overflow-hidden bg-slate-50 aspect-[4/5] flex items-center justify-center p-2">
+                   <img id="view-bagan-desa" class="w-full h-full object-contain hidden" src="" alt="Struktur Organisasi Desa">
+                  <div id="view-bagan-empty" class="text-center text-slate-400 p-4 space-y-2">
+                    <i class="fas fa-sitemap text-3xl text-slate-300 block"></i>
+                    <span class="text-xs">Bagan belum diunggah admin</span>
+                  </div>
+                </div>
+                <button onclick="bukaModalGambarPenuh()" id="btn-zoom-bagan" class="w-full text-center bg-slate-900 hover:bg-blue-600 text-white font-bold py-3 rounded-xl text-xs transition hidden">
+                  <i class="fas fa-search-plus mr-1.5"></i> Perbesar Gambar Bagan
+                </button>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+
+<script>
+  
+    // =========================================================================
+    // JEMBATAN SINKRONISASI CLOUD FIREBASE SISI WARGA (SUDAH DIPERBAIKI)
+    // =========================================================================
+    function muatDataDariFirebase() {
+        dbRealtime.ref('database_desa/').on('value', (snapshot) => {
+            const dataCloud = snapshot.val();
+            if (dataCloud) {
+                console.log("🔄 Menyelaraskan data lokal dengan Cloud Firebase...");
+                
+                // Loop data cloud dan tulis ulang ke localStorage warga secara otomatis
+                for (const key in dataCloud) {
+                    if (dataCloud[key] !== null) {
+                        localStorage.setItem(key, JSON.stringify(dataCloud[key]));
+                    }
+                }
+                
+                // PANGGIL FUNGSI ASLI BAWAAN SCRIPT ANDA UNTUK MERENDER ULANG TAMPILAN
+                if (typeof muatData === 'function') {
+                    muatData(); 
+                }
+            }
+        });
+    }
+  
+  // Jalankan pengambilan data cloud langsung saat halaman index pertama kali dibuka warga
+  muatDataDariFirebase();
+
+  
+  
+    // --- FORMATTER ---
+    const formatRupiah = (angka) => {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(angka);
+    };
+    
+    // --- MODAL CONTROL ---
+    function toggleAdminModal() {
+       document.getElementById('adminModal').classList.toggle('hidden');
+    }
+    
+    // --- FUNGSI VALIDASI NOMOR WA (BARU) ---
+    function validasiNomorWA(input) {
+      let angka = input.value.replace(/\D/g, ''); // Hapus semua non-angka
+      if (angka.startsWith('0')) {
+         angka = '62' + angka.substring(1);
+      }
+      // Batasi 13-14 digit (standar Indonesia)
+      if (angka.length > 14) {
+         angka = angka.substring(0, 14);
+      }
+      input.value = angka;
+      
+      const pesanError = document.getElementById('pesan-error-wa');
+      if (angka.length > 0 && angka.length < 10) {
+          input.classList.add('border-red-500');
+          pesanError.innerText = "⚠️ Nomor terlalu pendek";
+          pesanError.classList.replace('text-gray-400', 'text-red-500');
+      } else {
+          input.classList.remove('border-red-500');
+          pesanError.innerText = "Format otomatis: 628...";
+          pesanError.classList.replace('text-red-500', 'text-gray-400');
+      }
+    }
+    
+    // --- LOGIKA LOGIN ---
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMessage');
+      
+      if (user === 'admin' && pass === 'desa123') {
+          // Simpan status login
+          localStorage.setItem("isLogin", "true");
+          
+          // Arahkan ke dashboard
+          window.location.href = 'admin-dashboard.html';
+      } else {
+          errorMsg.classList.remove('hidden');
+          setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+      }
+    });
+    
+    // --- RENDER GRAFIK ---
+    function renderGrafikAnggaran() {
+      const ang = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+      const ctx = document.getElementById('chartAnggaran');
+      if (!ctx || ang.length === 0) return;
+      
+      const rekap = {};
+      ang.forEach(item => {
+      const nilai = parseInt(item.nilai) || 0;
+      rekap[item.sumber] = (rekap[item.sumber] || 0) + nilai;
+      });
+      
+      const labels = Object.keys(rekap);
+      const values = Object.values(rekap);
+      
+      if (window.myChart) window.myChart.destroy();
+      window.myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: ['#E11D48', '#2563EB', '#059669', '#D97706', '#7C3AED'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { 
+              position: window.innerWidth < 768 ? 'bottom' : 'right', // Di HP taruh bawah, di PC taruh kanan
+              labels: {
+                boxWidth: 12,
+                font: { size: 10 }
+              }
+            },
+            datalabels: {
+              anchor: 'end',
+              align: 'start',
+              color: '#fff',
+              font: { weight: 'bold' },
+              formatter: (value) => {
+                if (value >= 1000000000) return (value / 1000000000).toFixed(1) + 'M';
+                if (value >= 1000000) return (value / 1000000).toFixed(0) + 'Jt';
+                return value;
+              }
+            }
+          } 
+        }
+      });
+    }
+    
+    // --- SINKRONISASI SEMUA DATA ---
+    function syncAllData() {
+    const rkpRaw = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+    const ang = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+      // 1. Sorting Data agar berurutan 01, 02, dst
+      const rkp = rkpRaw.sort((a, b) => {
+        if (a.bidang < b.bidang) return -1;
+        if (a.bidang > b.bidang) return 1;
+        if (a.sub < b.sub) return -1;
+        if (a.sub > b.sub) return 1;
+        return 0;
+      });
+      // 2. Hitung Total Statistik Header
+      let tPendapatan = 0;
+        ang.forEach(i => tPendapatan += parseInt(i.nilai || 0));
+      let tRKP = 0;
+       rkp.forEach(i => tRKP += parseInt(i.nilai || 0));
+      // Update Angka di Hero/Dashboard
+      if(document.getElementById('total-pendapatan-depan')) 
+        document.getElementById('total-pendapatan-depan').innerText = formatRupiah(tPendapatan);
+      if(document.getElementById('total-rkp-depan')) 
+        document.getElementById('total-rkp-depan').innerText = formatRupiah(tRKP);
+      // 3. LOGIKA RENDER PER BIDANG (Tabel Terpisah)
+      const containerUtama = document.getElementById('containerPerBidang');
+       if (!containerUtama) return;
+         containerUtama.innerHTML = ""; // Reset isi
+      // Ambil daftar Bidang unik yang ada datanya
+      const daftarBidang = [...new Set(rkp.map(item => item.bidang))];
+        if (daftarBidang.length > 0) {
+            daftarBidang.forEach(namaBidang => {
+              const kegiatanDiBidang = rkp.filter(item => item.bidang === namaBidang);
+              const totalBidang = kegiatanDiBidang.reduce((sum, item) => sum + parseInt(item.nilai || 0), 0);
+              // ... di dalam looping daftarBidang.forEach ...
+              const sectionId = `content-${namaBidang.replace(/\s+/g, '-')}`; // Buat ID unik tanpa spasi
+              const sectionHtml = `
+              <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-4">
+                <div onclick="toggleBidang('${sectionId}', this)" class="bg-slate-900 p-5 cursor-pointer hover:bg-slate-800 transition flex justify-between items-center">
+                  <h4 class="text-white font-bold text-sm uppercase tracking-widest flex items-center">
+                    <i class="fas fa-folder-open mr-3 text-blue-400"></i> ${namaBidang}
+                  </h4>
+                  <div class="flex items-center space-x-4">
+                    <span class="text-[10px] bg-slate-700 text-slate-300 px-2 py-1 rounded font-bold">${kegiatanDiBidang.length} Kegiatan</span>
+                    <i class="fas fa-chevron-down text-white rotate-icon text-xs"></i>
+                  </div>
+                </div>
+                <div id="${sectionId}" class="bidang-content">
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                      <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100">
+                          <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Program & Sub Bidang</th>
+                          <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Anggaran</th>
+                          <th class="p-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-slate-50">
+                        ${kegiatanDiBidang.map(item => `
+                        <tr class="hover:bg-blue-50/30 transition">
+                          <td class="p-5">
+                            <p class="font-bold text-slate-800 text-sm">${item.nama}</p>
+                            <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mt-1">${item.sub}</p>
+                          </td>
+                          <td class="p-5 font-bold text-slate-700 text-right text-sm">${formatRupiah(item.nilai)}</td>
+                          <td class="p-5 text-center">
+                            <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${item.progres == 100 ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}">
+                              ${item.progres == 100 ? 'Selesai' : 'Proses'}
+                            </span>
+                          </td>
+                        </tr>
+                        `).join('')}
+                      </tbody>
+                      <tfoot class="bg-slate-50 font-bold border-t-2 border-slate-100">
+                        <tr>
+                          <td class="p-4 text-xs text-slate-500 uppercase">Total Penggunaan Anggaran</td>
+                          <td class="p-4 text-right text-slate-900 text-sm" colspan="2">${formatRupiah(totalBidang)}</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              `;
+              containerUtama.innerHTML += sectionHtml;
+            });
+      } else {
+       containerUtama.innerHTML = `<div class="text-center p-10 bg-white rounded-3xl border-2 border-dashed border-slate-200 text-slate-400 italic">Belum ada data kegiatan yang diinput oleh Admin.</div>`;
+      }
+      
+      function updateStatistikBeranda() {
+        // 1. Hitung Otomatis Total Aduan Masyarakat
+            const aduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+            document.getElementById('stat-aduan').innerText = aduan.length;
+            // 2. Ambil Data Anggaran & Realisasi dari RKP/Anggaran yang diinput admin
+            const rkpData = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+            let totalPagu = 0;
+            let totalRealisasi = 0;
+            rkpData.forEach(item => {
+              // Asumsi properti item.pagu atau item.anggaran ada di data Anda
+              totalPagu += parseFloat(item.anggaran || item.pagu || 0);
+              totalRealisasi += parseFloat(item.realisasi || 0);
+            });
+        // Format Mata Uang Rupiah Ringkas jika angka terlalu besar
+            document.getElementById('stat-dana').innerText = totalPagu > 0 ? formatRupiahRingkas(totalPagu) : 'Rp 0';
+            document.getElementById('stat-realisasi').innerText = totalRealisasi > 0 ? formatRupiahRingkas(totalRealisasi) : 'Rp 0';
+        // 3. Data Statis Awal Penduduk & KK (Bisa kita hubungkan ke localStorage nanti jika admin sudah membuat menunya)
+            document.getElementById('stat-kk').innerText = "342"; // Contoh default data KK
+            document.getElementById('stat-penduduk').innerText = "1.240"; // Contoh default data Penduduk
+      }
+      
+      // Fungsi pembantu format uang rupiah ringkas (Misal: 1M atau 850Jt agar pas di kotak kecil)
+      function formatRupiahRingkas(angka) {
+          if (angka >= 1000000000) {
+          return 'Rp ' + (angka / 1000000000).toFixed(1) + ' M';
+          } else if (angka >= 1000000) {
+          return 'Rp ' + (angka / 1000000).toFixed(1) + ' Jt';
+          }
+          return 'Rp ' + angka.toLocaleString('id-ID');
+      }
+      // Jalankan fungsi saat halaman pertama kali dimuat
+         document.addEventListener('DOMContentLoaded', updateStatistikBeranda);
+      // 4. Update Section lainnya (Prioritas & Progres)
+      updatePrioritas(rkp);
+      updateProgresList(rkp);
+    }
+    
+    // Fungsi tambahan untuk merapikan kode
+    function updatePrioritas(rkp) {
+      const cont = document.getElementById('containerPrioritas');
+      if(!cont) return;
+      const prioritas = rkp.filter(item => item.status === 'Prioritas');
+      cont.innerHTML = prioritas.map(item => `
+      <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-5 card-hover">
+        <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-xl">
+          <i class="fas fa-star"></i>
+        </div>
+        <div>
+          <h4 class="font-black text-slate-800 uppercase text-xs tracking-tight">${item.nama}</h4>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">${item.sub}</p>
+        </div>
+      </div>
+      `).join('');
+    }
+    
+    function updateProgresList(rkp) {
+        const cont = document.getElementById('containerProgres');
+        if (!cont) return;
+    
+        if (!rkp || rkp.length === 0) {
+            cont.innerHTML = `
+            <div class="text-center text-slate-400 italic text-sm py-8 bg-white border border-slate-100 rounded-3xl shadow-sm">
+                <i class="fas fa-tasks text-xl block mb-2 text-slate-300"></i>
+                Belum ada data progres pelaksanaan kegiatan.
+            </div>`;
+            return;
+        }
+    
+        // Membangun struktur kontainer utama accordion (bisa klik buka-tutup)
+        let html = `
+        <div class="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-sm transition duration-300">
+            <div onclick="toggleBidang('isi-progres-keseluruhan', this)" class="p-5 cursor-pointer flex justify-between items-center bg-slate-50/80 hover:bg-slate-100/80 transition duration-200">
+                <div class="text-left">
+                    <h5 class="font-extrabold text-slate-800 text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-chart-line text-blue-500"></i>
+                        Daftar Progres Pelaksanaan Kegiatan
+                    </h5>
+                    <p class="text-[10px] sm:text-xs text-slate-400 font-medium mt-0.5">Klik untuk melihat detail semua kegiatan pembangunan</p>
+                </div>
+                <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform duration-300 rotate-icon"></i>
+            </div>
+            
+            <div id="isi-progres-keseluruhan" class="bidang-content hidden">
+                <div class="p-5 space-y-5 divide-y divide-slate-100">
+        `;
+    
+        // Loooping daftar kegiatan pembangunan di dalam array rkp
+        rkp.forEach((item) => {
+            // Ambil nilai progres agar aman jika nilainya kosong atau undefined
+            const nilaiProgres = item.progres || 0;
+    
+            html += `
+            <div class="pt-4 first:pt-0 text-left">
+                <p class="text-[9px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">
+                    <i class="fas fa-tags text-[8px] mr-1"></i>${item.bidang || 'Kegiatan'}
+                </p>
+                
+                <div class="flex justify-between items-start mb-2 gap-4">
+                    <h6 class="font-bold text-slate-800 text-xs sm:text-sm leading-snug flex-1">${item.nama}</h6>
+                    <span class="text-[11px] font-extrabold text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-0.5 rounded-lg shadow-sm flex-shrink-0">
+                        ${nilaiProgres}%
+                    </span>
+                </div>
+                
+                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden shadow-inner">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full transition-all duration-700" style="width: ${nilaiProgres}%"></div>
+                </div>
+                
+                <div class="flex justify-between mt-2 text-[10px] font-semibold text-slate-400 tracking-wide bg-slate-50/50 p-1.5 rounded-md">
+                    <span class="flex items-center gap-1"><i class="fas fa-wallet text-[9px] text-slate-300"></i> ${item.sumber || '-'}</span>
+                    <span class="font-bold text-slate-600">${typeof formatRupiah === 'function' ? formatRupiah(item.nilai) : item.nilai}</span>
+                </div>
+            </div>
+            `;
+        });
+    
+        html += `
+                </div>
+            </div>
+        </div>
+        `;
+    
+        cont.innerHTML = html;
+    }
+    
+    // --- INISIALISASI ---
+    document.addEventListener('DOMContentLoaded', () => {
+      syncAllData();
+      renderGrafikAnggaran();
+    });
+    
+    // --- FORM ADUAN (SUDAH DIPERBAIKI) ---
+    document.getElementById('formAduanWarga').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Ambil nilai nomor WA
+      const telpVal = document.getElementById('telpAduan').value;
+      // Validasi panjang nomor
+      if (telpVal.length < 11) {
+        alert("Mohon masukkan nomor WhatsApp yang benar (minimal 11 digit).");
+      return; 
+      }
+      const aduan = {
+        id: Date.now(),
+        nama: document.getElementById('namaPengadu').value,
+        nik: document.getElementById('nikPengadu').value,
+        telp: document.getElementById('telpAduan').value, // Pastikan ID ini sesuai
+        isi: document.getElementById('isiPengaduan').value,
+        tanggal: new Date().toLocaleString('id-ID'), // Tambahkan jam agar lebih detail
+        status: 'Baru'
+      };
+      let listAduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+          listAduan.push(aduan);
+          localStorage.setItem('desa_aduan', JSON.stringify(listAduan));
+      this.reset();
+      alert("Aduan Terkirim! Kami akan segera menindaklanjuti laporan Anda.");
+      // Di dalam fungsi simpan aduan atau reset form pengaduan:
+          document.getElementById('preview-container').classList.add('hidden')
+          document.getElementById('prev-nama').innerText = "-";
+          document.getElementById('prev-isi').innerText = "-";
+    });
+    
+    // Fungsi untuk memperbarui Preview secara Real-Time
+    function updatePreviewAduan() {
+      const nama = document.getElementById('namaPengadu').value;
+      const isi = document.getElementById('isiPengaduan').value;
+      const telp = document.getElementById('telpAduan').value; // Tambahkan ini
+      const container = document.getElementById('preview-container');
+      if (nama.trim() !== "" || isi.trim() !== "" || telp.trim() !== "") {
+       container.classList.remove('hidden');
+      } else {
+       container.classList.add('hidden');
+      }
+      // Update teks preview
+      // Anda bisa menambahkan nomor telp di samping nama pada preview
+        document.getElementById('prev-nama').innerHTML = `${nama || "-"} <br> <span class="text-[8px] font-normal text-slate-400">${telp}</span>`;
+        document.getElementById('prev-isi').innerText = isi ? `"${isi}"` : "-";
+    }
+    // Tambahkan listener untuk input telp juga
+      document.getElementById('telpAduan').addEventListener('input', updatePreviewAduan);
+    // Hubungkan ke input yang benar sesuai ID di HTML
+      document.getElementById('namaPengadu').addEventListener('input', updatePreviewAduan);
+      document.getElementById('isiPengaduan').addEventListener('input', updatePreviewAduan);
+    
+    // fungsi Global
+    function toggleBidang(id, el) {
+      const content = document.getElementById(id);
+      const icon = el.querySelector('.rotate-icon');
+      if (content) content.classList.toggle('active');
+      if (icon) icon.classList.toggle('active');
+    }
+   
+    function updateStatistikBeranda() {
+      // 1. Hitung Otomatis Total Aduan Masyarakat
+      const aduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+      document.getElementById('stat-aduan').innerText = aduan.length;
+      // 2. Ambil Data Anggaran & Realisasi dari RKP/Anggaran yang diinput admin
+      const rkpData = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+      let totalPagu = 0;
+      let totalRealisasi = 0;
+      rkpData.forEach(item => {
+        // Asumsi properti item.pagu atau item.anggaran ada di data Anda
+        totalPagu += parseFloat(item.anggaran || item.pagu || 0);
+        totalRealisasi += parseFloat(item.realisasi || 0);
+      });
+      // Format Mata Uang Rupiah Ringkas jika angka terlalu besar
+      document.getElementById('stat-dana').innerText = totalPagu > 0 ? formatRupiahRingkas(totalPagu) : 'Rp 0';
+      document.getElementById('stat-realisasi').innerText = totalRealisasi > 0 ? formatRupiahRingkas(totalRealisasi) : 'Rp 0';
+      // 3. Data Statis Awal Penduduk & KK (Bisa kita hubungkan ke localStorage nanti jika admin sudah membuat menunya)
+      document.getElementById('stat-kk').innerText = "342"; // Contoh default data KK
+      document.getElementById('stat-penduduk').innerText = "1.240"; // Contoh default data Penduduk
+    }
+    
+    // Fungsi pembantu format uang rupiah ringkas (Misal: 1M atau 850Jt agar pas di kotak kecil)
+    function formatRupiahRingkas(angka) {
+      if (angka >= 1000000000) {
+       return 'Rp ' + (angka / 1000000000).toFixed(1) + ' M';
+      } else if (angka >= 1000000) {
+        return 'Rp ' + (angka / 1000000).toFixed(1) + ' Jt';
+      }
+        return 'Rp ' + angka.toLocaleString('id-ID');
+    }
+    
+    
+    // Jalankan fungsi saat halaman pertama kali dimuat
+    document.addEventListener('DOMContentLoaded', updateStatistikBeranda);
+    // --- KONTROL LAYOUT HALAMAN REALISASI DANA DESA ---
+    function bukaHalamanRealisasi() {
+      const halRealisasi = document.getElementById('halaman-realisasi-full');
+      if (halRealisasi) {
+      halRealisasi.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Kunci scroll beranda belakang
+      // Render ulang data & grafik Chart.js agar terisi sempurna di halaman baru
+        if (typeof syncAllData === "function") {
+        syncAllData();
+        }
+      }
+    }
+    
+    function tutupHalamanRealisasi() {
+    const halRealisasi = document.getElementById('halaman-realisasi-full');
+      if (halRealisasi) {
+        halRealisasi.classList.add('hidden');
+        document.body.style.overflow = 'auto'; // Aktifkan kembali scroll beranda
+      }
+    }
+    
+    ////
+    function bukaHalamanProfil() {
+      const halProfil = document.getElementById('halaman-profil-full');
+      halProfil.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Kunci scroll belakang
+      
+      // Ambil data profil terbaru dari localStorage
+      const dataProfil = JSON.parse(localStorage.getItem('desa_profil'));
+      if (dataProfil) {
+      if (dataProfil.tentang) document.getElementById('view-tentang-desa').innerText = dataProfil.tentang;
+      if (dataProfil.visimisi) document.getElementById('view-visimisi').innerText = dataProfil.visimisi;
+        if (dataProfil.bagan) {
+          document.getElementById('view-bagan-desa').src = dataProfil.bagan;
+          document.getElementById('view-bagan-desa').classList.remove('hidden');
+          document.getElementById('view-bagan-empty').classList.add('hidden');
+          document.getElementById('btn-zoom-bagan').classList.remove('hidden');
+        }
+      }
+    }
+    
+    function tutupHalamanProfil() {
+      document.getElementById('halaman-profil-full').classList.add('hidden');
+      document.body.style.overflow = 'auto'; // Kembalikan scroll normal
+    }
+    
+    function bukaModalGambarPenuh() {
+      const dataProfil = JSON.parse(localStorage.getItem('desa_profil'));
+      if (dataProfil && dataProfil.bagan) {
+        // Membuka gambar bagan struktur di tab baru agar warga bisa download/print dengan resolusi tinggi
+        const windowGambar = window.open();
+        windowGambar.document.write(`<iframe src="${dataProfil.bagan}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+      }
+    }
+    
+    // =========================================================================
+    // SINKRONISASI LOGIKA KONTROL & RENDER HALAMAN DOKUMENTASI KEGIATAN
+    // =========================================================================
+    
+    function bukaHalamanDokumentasi() {
+      // 1. Ambil elemen halaman modal dokumentasi penuh
+      const halDokumen = document.getElementById('halaman-dokumentasi-full');
+      if (halDokumen) {
+      // 2. Munculkan halaman modal (hapus class hidden)
+      halDokumen.classList.remove('hidden');
+      // 3. Kunci scroll halaman beranda belakang agar tidak ikut bergeser
+      document.body.style.overflow = 'hidden'; 
+      // 4. Jalankan fungsi render untuk menarik data terbaru dari localStorage admin
+      renderDokumentasiWarga(); 
+      }
+    }
+    
+    function tutupHalamanDokumentasi() {
+      const halDokumen = document.getElementById('halaman-dokumentasi-full');
+      if (halDokumen) {
+      // 1. Sembunyikan kembali halaman modal
+      halDokumen.classList.add('hidden');
+      // 2. Kembalikan scroll normal browser
+      document.body.style.overflow = 'auto'; 
+      }
+    }
+    
+    // =========================================================================
+    // FUNGSI POPUP LIGHTBOX (PREVIEW FOTO FULL LAYAR)
+    // =========================================================================
+    
+    function bukaPreviewFoto(srcFoto, teksKeterangan) {
+    const modalPreview = document.getElementById('modal-preview-foto');
+      const imgFull = document.getElementById('foto-preview-full');
+      const txtFull = document.getElementById('teks-preview-full');
+      if (modalPreview && imgFull) {
+        imgFull.src = srcFoto; // Masukkan sumber gambar
+        txtFull.innerHTML = `"${teksKeterangan}"`; // Masukkan teks keterangan di bawahnya
+        modalPreview.classList.remove('hidden'); // Munculkan modal preview
+      }
+    }
+    
+    function tutupPreviewFoto() {
+      const modalPreview = document.getElementById('modal-preview-foto');
+      if (modalPreview) {
+        modalPreview.classList.add('hidden'); // Sembunyikan kembali modal preview
+      }
+    }
+    
+    function renderDokumentasiWarga() {
+      // Ambil data 'desa_dokumentasi' yang disimpan oleh admin-dashboard.html
+      const listDokumentasi = JSON.parse(localStorage.getItem('desa_dokumentasi')) || [];
+      // Targetkan ke ID penampung yang berada di dalam halaman modal penuh Anda
+      const gridContainer = document.getElementById('gridDokumentasiKhusus');
+      if (!gridContainer) return;
+      gridContainer.className = "grid grid-cols-1 gap-8 max-w-3xl mx-auto";
+      
+      // Jika data yang di-upload admin masih kosong
+      if (listDokumentasi.length === 0) {
+      gridContainer.innerHTML = `
+        <div class="col-span-full text-center text-slate-400 italic py-16 bg-white rounded-2xl border border-slate-200">
+          <i class="fas fa-images text-4xl block mb-3 text-slate-200"></i>
+          Belum ada koleksi foto dokumentasi kegiatan yang diupload oleh admin.
+        </div>`;
+        return;
+      }
+      
+      // Susun foto dengan urutan teranyar berada di paling atas
+      gridContainer.innerHTML = listDokumentasi.slice().reverse().map(item => {
+        // Ambil data teks keterangan dan bersihkan tanda kutip agar tidak merusak fungsi onclick
+        const ketBersih = (item.keterangan || '').replace(/"/g, '&quot;').replace(/'/g, "\\'");
+        return `
+        <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg border border-slate-200/80 transition duration-300 flex flex-col w-full mb-6">
+          <div class="relative w-full bg-slate-50 cursor-pointer group" onclick="bukaPreviewFoto('${item.foto}', '${ketBersih}')">
+            <img src="${item.foto}" 
+            alt="Dokumentasi Desa" 
+            class="w-full h-auto block group-hover:opacity-90 transition duration-200">
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 flex items-center justify-center transition duration-200">
+              <span class="bg-white/80 backdrop-blur-sm text-slate-800 text-xs font-semibold px-3 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition duration-200 shadow-sm">
+              <i class="fas fa-search-plus mr-1 text-red-500"></i> Klik untuk memperbesar
+              </span>
+            </div>
+            <div class="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-xl font-medium shadow-md z-10">
+              <i class="far fa-calendar-alt mr-1.5 text-red-400"></i> ${item.tanggal || '-'}
+            </div>
+          </div>
+          <div class="p-5 sm:p-6 bg-white border-t border-slate-100 flex-shrink-0">
+            <p class="text-sm sm:text-base font-medium text-slate-700 leading-relaxed italic">
+            "${item.keterangan}"
+            </p>
+          </div>
+        
+        </div>
+        `;
+      }).join('');
+    }
+    
+    
+    // ==========================================
+    // FIX ABSOLUT: MODUL DOKUMEN PERENCANAAN (PDF)
+    // BARIS PENUH + KETERANGAN KOSONG REPLIKA DOKUMENTASI
+    // ==========================================
+    function bukaModalPdf() {
+        const modalUtama = document.getElementById('modalPdfWarga');
+        if (!modalUtama) return;
+    
+        // 1. Munculkan halaman penuh & kunci scroll beranda belakang
+        modalUtama.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    
+        // 2. Ambil penampung dokumen
+        const wadah = document.getElementById('daftarPdfWarga');
+        if (!wadah) return;
+    
+        // 3. Ambil data dari localStorage
+        const dataLokal = localStorage.getItem('desa_dokumen_pdf');
+        const listPdf = dataLokal ? JSON.parse(dataLokal) : [];
+        
+        // 4. JIKA DATA KOSONG: Tampilkan keterangan dengan layout tengah penuh
+        if (listPdf.length === 0) {
+            wadah.className = "grid grid-cols-1 w-full max-w-3xl mx-auto";
+            wadah.innerHTML = `
+                <div class="text-center text-slate-400 italic py-16 bg-white rounded-2xl border border-slate-200 w-full flex flex-col items-center justify-center space-y-3 shadow-sm">
+                    <i class="fas fa-file-pdf text-4xl text-slate-200"></i>
+                    <p class="text-xs font-medium text-slate-400 not-italic">
+                        Belum ada koleksi dokumen perencanaan resmi yang diupload oleh admin.
+                    </p>
+                </div>`;
+            return;
+        }
+    
+        // 5. JIKA DATA ADA: Render dengan sistem Grid Responsif (1 Kolom di HP, 2 Kolom di PC agar efisien)
+        wadah.className = "grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-7xl mx-auto";
+        
+        wadah.innerHTML = listPdf.slice().reverse().map(item => `
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-md hover:shadow-lg transition duration-300 flex flex-col justify-between gap-5 text-left w-full">
+            <div class="flex items-start space-x-4 min-w-0">
+                <div class="w-12 h-12 flex items-center justify-center bg-red-50 text-red-600 rounded-2xl border border-red-100 flex-shrink-0 text-lg shadow-inner">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="overflow-hidden flex-1 py-0.5">
+                    <span class="text-[9px] font-black bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full uppercase tracking-wide border border-red-200 inline-block">${item.jenis}</span>
+                    <h4 class="text-sm sm:text-base font-extrabold text-slate-800 leading-snug mt-2 break-words">${item.keterangan}</h4>
+                    <p class="text-[10px] sm:text-xs text-slate-400 font-medium mt-1.5 flex items-center">
+                        <i class="far fa-calendar-alt mr-1.5 text-red-500"></i> Tanggal Rilis: ${item.tanggal}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Tombol Aksi di bagian bawah card dokumen -->
+            <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 w-full">
+                <a href="${item.fileData}" target="_blank" class="text-center bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-3 rounded-xl transition flex items-center justify-center space-x-1.5 border border-slate-200/40 active:scale-95 shadow-sm">
+                    <i class="fas fa-eye text-slate-400"></i> <span>Baca</span>
+                </a>
+                <a href="${item.fileData}" download="${item.keterangan}.pdf" class="text-center bg-slate-900 hover:bg-red-600 text-white text-xs font-bold py-3 rounded-xl transition flex items-center justify-center space-x-1.5 shadow-md active:scale-95">
+                    <i class="fas fa-download text-[10px]"></i> <span>Unduh PDF</span>
+                </a>
+            </div>
+        </div>`).join('');
+    }
+
+    
+    function tutupModalPdf() {
+        const modalUtama = document.getElementById('modalPdfWarga');
+        if (modalUtama) {
+            modalUtama.classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Mengembalikan scroll beranda belakang
+        }
+    }
+
+    
+    function renderPdfWarga() {
+        // Membaca kiriman data base64 PDF dari halaman dashboard admin
+        const listPdf = JSON.parse(localStorage.getItem('desa_dokumen_pdf')) || [];
+        const wadahKonten = document.getElementById('daftarPdfWarga');
+        if (!wadahKonten) return;
+        
+        // Keadaan jika data masih kosong
+        if (listPdf.length === 0) {
+            wadahKonten.innerHTML = `
+            <div class="text-center text-slate-400 italic py-16 bg-white border border-slate-200/60 rounded-3xl shadow-sm">
+                <i class="fas fa-file-pdf text-4xl block mb-3 text-slate-200"></i>
+                Belum ada berkas RKP Desa atau APBDes resmi yang diunggah oleh admin.
+            </div>`;
+            return;
+        }
+    
+          // Looping data berkas dengan urutan teranyar di atas
+          wadahKonten.innerHTML = listPdf.slice().reverse().map((item) => {
+              return `
+              <div class="bg-white rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:border-red-200 transition duration-200 flex flex-col space-y-4 text-left">
+                  <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 flex items-center justify-center bg-red-50 text-red-600 rounded-xl border border-red-100 flex-shrink-0">
+                          <i class="fas fa-file-pdf"></i>
+                      </div>
+                      <div class="overflow-hidden flex-1">
+                          <span class="text-[9px] font-black bg-red-50 text-red-700 px-2 py-0.5 rounded uppercase tracking-wide border border-red-100 inline-block">
+                              ${item.jenis}
+                          </span>
+                          <h4 class="text-sm font-bold text-slate-800 leading-snug mt-1.5">${item.keterangan}</h4>
+                          <p class="text-[10px] text-slate-400 mt-1"><i class="far fa-calendar-alt mr-1"></i> Tanggal Rilis: ${item.tanggal}</p>
+                      </div>
+                  </div>
+                  
+                  <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-50">
+                      <a href="${item.fileData}" target="_blank" class="text-center bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-1.5 shadow-sm">
+                          <i class="fas fa-eye text-slate-400"></i>
+                          <span>Baca Langsung</span>
+                      </a>
+                      <a href="${item.fileData}" download="${item.keterangan}.pdf" class="text-center bg-slate-900 hover:bg-red-600 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-1.5 shadow-sm">
+                          <i class="fas fa-download"></i>
+                          <span>Unduh Berkas</span>
+                      </a>
+                  </div>
+              </div>
+              `;
+          }).join('');
+     }
+     
+     
+//eksekusi realisasi Dana Desa
+
+    // =====================================================================
+    // UPDATE TOTAL: GRAFIK PROPORSI BERDASARKAN SUMBER PENDAPATAN DESA
+    // =====================================================================
+    function bukaModalRealisasi() {
+        const modalUtama = document.getElementById('modalRealisasi');
+        const wadahPrioritas = document.getElementById('modalContainerPrioritas');
+        if (!modalUtama) return;
+    
+        modalUtama.classList.remove('hidden');
+    
+        const wadah = document.getElementById('daftarRealisasi');
+        if (!wadah) return;
+    
+        // Tarik data dari localStorage
+        const dataLokal = localStorage.getItem('desa_rkp');
+        const listRKP = dataLokal ? JSON.parse(dataLokal) : [];
+        const dataAnggaran = localStorage.getItem('desa_anggaran') ? JSON.parse(localStorage.getItem('desa_anggaran')) : [];
+        
+        // --- 1. HITUNG VALUE MATEMATIKA UNTUK RINGKASAN CARD ---
+        let totalPendapatan = 0;
+        dataAnggaran.forEach(i => totalPendapatan += parseInt(i.nilai || 0));
+    
+        let totalBelanja = 0;
+        listRKP.forEach(i => totalBelanja += parseInt(i.nilai || 0));
+    
+        let persenRealisasi = totalPendapatan > 0 ? Math.round((totalBelanja / totalPendapatan) * 100) : 0;
+    
+        // Tampilkan nominal pada elemen UI Card
+        if(document.getElementById('totalPendapatanMurni')) {
+            document.getElementById('totalPendapatanMurni').innerText = formatRupiah(totalPendapatan);
+        }
+        if(document.getElementById('totalBelanjaMurni')) {
+            document.getElementById('totalBelanjaMurni').innerText = formatRupiah(totalBelanja);
+        }
+        if(document.getElementById('persentaseTerpakai')) {
+            document.getElementById('persentaseTerpakai').innerText = persenRealisasi + "%";
+            
+        }
+        // Render Bagian Kegiatan Prioritas di dalam Modal
+        if (wadahPrioritas) {
+            const listPrioritas = listRKP.filter(item => item.status === 'Prioritas');
+            if (listPrioritas.length === 0) {
+                wadahPrioritas.innerHTML = `
+                <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <p class="text-xs text-slate-400 italic">Belum ada kegiatan prioritas utama.</p>
+                </div>`;
+            } else {
+                wadahPrioritas.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    ${listPrioritas.map(item => `
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center text-base flex-shrink-0 border border-orange-100">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h5 class="font-extrabold text-slate-800 uppercase text-[11px] tracking-tight truncate">${item.nama}</h5>
+                            <p class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider truncate mt-0.5">${item.sub}</p>
+                            <p class="text-[10px] text-emerald-600 font-bold mt-1">${formatRupiah(item.nilai)}</p>
+                        </div>
+                    </div>
+                    `).join('')}
+                </div>`;
+            }
+        }
+
+        
+    
+        // --- 2. LOGIKA BARU: REKAP DAN HITUNG PROPORSI SUMBER PENDAPATAN ---
+        const rekapSumberPendapatan = {};
+        
+        dataAnggaran.forEach(item => {
+            // Membaca properti sumber anggaran/sumber dana yang diinput dari admin-dashboard
+            let sumber = item.sumber || item.sumberDana || item.kategori || 'Lain-lain';
+            sumber = sumber.trim().toUpperCase(); // Samakan format teks menjadi huruf kapital
+            
+            const nilai = parseInt(item.nilai) || 0;
+            
+            // Akumulasikan nilai dana masuk berdasarkan nama sumbernya
+            rekapSumberPendapatan[sumber] = (rekapSumberPendapatan[sumber] || 0) + nilai;
+        });
+    
+        // Jika data anggaran kosong, buat fallback visual sementara agar grafik tidak error kosong
+        if (Object.keys(rekapSumberPendapatan).length === 0) {
+            rekapSumberPendapatan['BELUM ADA DATA'] = 0;
+        }
+    
+        // --- 3. INJEKSI KE CHART.JS (PROPORSI SUMBER PENDAPATAN) ---
+        const ctxModal = document.getElementById('chartProporsiDanaModal');
+        if (ctxModal) {
+            if (window.myModalChart) window.myModalChart.destroy(); // Hancurkan chart lama agar tidak tumpang tindih
+            
+            window.myModalChart = new Chart(ctxModal, {
+                type: 'doughnut', // Grafik lingkaran donat modern
+                data: {
+                    labels: Object.keys(rekapSumberPendapatan),
+                    datasets: [{
+                        data: Object.values(rekapSumberPendapatan),
+                        backgroundColor: [
+                            '#10B981', // Emerald (Dana Desa - DD)
+                            '#3B82F6', // Blue (Alokasi Dana Desa - ADD)
+                            '#F59E0B', // Amber (PADes)
+                            '#EC4899', // Pink (Bagi Hasil Pajak)
+                            '#8B5CF6', // Purple (Bantuan Keuangan)
+                            '#64748B'  // Slate (Lainnya)
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false // Sembunyikan legenda bawaan agar menghemat ruang modal
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return ` ${label}: Rp ${value.toLocaleString('id-ID')}`;
+                                }
+                            }
+                        },
+                        datalabels: { display: false }
+                    }
+                }
+            });
+        }
+    
+        // CONDITIONAL CONTROL JIKA LIST KEGIATAN KOSONG
+        if (listRKP.length === 0) {
+            wadah.className = "w-full p-2 text-center";
+            wadah.innerHTML = `
+                <div class="col-span-full text-center text-slate-400 italic py-16 bg-white rounded-2xl border border-slate-200 w-full flex flex-col items-center justify-center space-y-3 shadow-sm">
+                    <i class="fas fa-chart-line text-4xl block text-slate-200"></i>
+                    <p class="text-sm font-medium text-slate-400 not-italic tracking-wide">
+                        Belum ada data realisasi program kerja yang dipublikasikan oleh admin.
+                    </p>
+                </div>`;
+            return;
+        }
+    
+        // --- 4. GENERATE STRUKTUR DETAIL KEGIATAN AKORDEON (TETAP SAMA) ---
+        const strukturBerlapis = {};
+        listRKP.forEach(item => {
+            const namaBidang = item.bidang ? item.bidang.trim() : '01. BIDANG PENYELENGGARAAN PEMERINTAHAN DESA';
+            const namaSubBidang = item.sub ? item.sub.trim() : 'Lain-lain Sub Kegiatan';
+    
+            if (!strukturBerlapis[namaBidang]) strukturBerlapis[namaBidang] = {};
+            if (!strukturBerlapis[namaBidang][namaSubBidang]) strukturBerlapis[namaBidang][namaSubBidang] = [];
+            strukturBerlapis[namaBidang][namaSubBidang].push(item);
+        });
+    
+        wadah.className = "flex flex-col space-y-3 w-full block";
+        let htmlContent = '';
+        let idxBidang = 1;
+        let idxSub = 1;
+    
+        for (const bidang in strukturBerlapis) {
+            let subBidangHtml = '';
+            let totalKegiatanDiBidang = 0;
+    
+            for (const subBidang in strukturBerlapis[bidang]) {
+                const daftarKegiatan = strukturBerlapis[bidang][subBidang];
+                totalKegiatanDiBidang += daftarKegiatan.length;
+    
+                subBidangHtml += `
+                <div class="border border-slate-100 rounded-xl overflow-hidden bg-slate-50/30 mb-2">
+                    <button type="button" 
+                            onclick="toggleMekanismeLipat('sub-grup-${idxSub}', this)" 
+                            class="w-full px-4 py-3 flex items-center justify-between bg-white hover:bg-slate-50/80 transition text-left focus:outline-none cursor-pointer">
+                        <div class="flex items-center space-x-3 pointer-events-none">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                            <span class="text-xs font-black text-slate-700 uppercase tracking-wide leading-tight">${subBidang}</span>
+                        </div>
+                        <div class="w-5 h-5 flex items-center justify-center rounded bg-slate-50 border border-slate-200 text-slate-400 text-[9px] rotate-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </button>
+    
+                    
+                    <div id="sub-grup-${idxSub}" class="sub-bidang-content bg-white w-full hidden">
+                        <div class="p-4 border-t border-slate-50 flex flex-col space-y-3">
+                            ${daftarKegiatan.slice().reverse().map(item => {
+                                const nominalAnggaran = parseFloat(item.nilai) || 0;
+                                const persentaseProgres = Math.min(Math.max(parseInt(item.progres) || 0, 0), 100);
+                                const estimasiRealisasi = Math.round((persentaseProgres / 100) * nominalAnggaran);
+    
+                                return `
+                                <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-left w-full">
+                                    <div class="flex-1 min-w-0">
+                                        <h5 class="text-xs font-extrabold text-slate-800 leading-normal break-words">${item.nama}</h5>
+                                        <p class="text-[9px] text-slate-400 font-bold mt-1 flex items-center">
+                                            <i class="fas fa-coins mr-1.5 text-emerald-500"></i> Sumber Dana: <span class="text-slate-600 ml-1 font-extrabold">${item.sumberDana || item.sumber || 'Dana Desa (DD)'}</span>
+                                        </p>
+                                    </div>
+                                    <div class="min-w-[250px] lg:max-w-xs w-full bg-white p-2.5 rounded-xl border border-slate-200/60 flex flex-col justify-center space-y-1 shadow-sm">
+                                        <div class="flex justify-between text-[9px] font-bold">
+                                            <span class="text-slate-500">Pagu: <span class="text-slate-800 font-black">Rp ${nominalAnggaran.toLocaleString('id-ID')}</span></span>
+                                            <span class="text-emerald-600 font-black">Real: Rp ${estimasiRealisasi.toLocaleString('id-ID')}</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden flex">
+                                            <div class="bg-emerald-500 h-full rounded-full" style="width: ${persentaseProgres}%"></div>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[8px] font-black">
+                                            <span>STATUS: ${persentaseProgres === 100 ? '<span class="text-emerald-600 bg-emerald-50 px-1 rounded">SELESAI</span>' : '<span class="text-amber-500 bg-amber-50 px-1 rounded">PROSES</span>'}</span>
+                                            <span class="text-slate-600 bg-slate-100 px-1 rounded">${persentaseProgres}%</span>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>`;
+                idxSub++;
+            }
+    
+            // --- Ubah bagian pembuatan template string htmlContent menjadi seperti ini ---
+          
+          htmlContent += `
+          <div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm w-full block mb-3">
+              <button type="button" 
+                      onclick="toggleMekanismeLipat('main-grup-${idxBidang}', this)" 
+                      class="w-full p-5 flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 transition text-left focus:outline-none cursor-pointer">
+                  <div class="flex items-center space-x-4 min-w-0 pointer-events-none">
+                      <div class="w-10 h-10 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100 flex-shrink-0 text-sm shadow-sm">
+                          <i class="fas fa-folder font-bold"></i>
+                      </div>
+                      <div class="overflow-hidden">
+                          <h4 class="text-sm font-black text-slate-800 leading-snug uppercase">${bidang}</h4>
+                          <span class="text-[10px] text-slate-400 font-bold block mt-0.5">Total: ${totalKegiatanDiBidang} Kegiatan Terbagi</span>
+                      </div>
+                  </div>
+                  <div class="w-7 h-7 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-400 text-xs rotate-icon pointer-events-none">
+                      <i class="fas fa-chevron-down"></i>
+                  </div>
+              </button>
+          
+              <!-- KUNCI PERUBAHAN: Ditambahkan class 'hidden' agar tergulung otomatis di awal -->
+              <div id="main-grup-${idxBidang}" class="bidang-content bg-white w-full hidden">
+                  <div class="p-5 border-t border-slate-100 flex flex-col">
+                      ${subBidangHtml}
+                  </div>
+              </div>
+          </div>`;
+          idxBidang++;
+
+        }
+    
+        wadah.innerHTML = htmlContent;
+    }
+
+      // =====================================================================
+      // SAKLAR AKORDEON MURNI TAILWIND UTILITY SAKLAR (100% BEBAS BOCOR)
+      // =====================================================================
+      function toggleMekanismeLipat(idTarget, tombol) {
+          const target = document.getElementById(idTarget);
+          const ikonPanah = tombol.querySelector('.rotate-icon');
+          
+          if (!target) return;
+      
+          // Jalankan operasi saklar kelas 'hidden' milik Tailwind secara ketat
+          if (target.classList.contains('hidden')) {
+              target.classList.remove('hidden');
+              if (ikonPanah) ikonPanah.style.transform = "rotate(180deg)";
+          } else {
+              target.classList.add('hidden');
+              if (ikonPanah) ikonPanah.style.transform = "rotate(0deg)";
+          }
+      }
+      
+      // Matikan fungsi lama agar tidak terjadi konflik eksekusi kelas
+      function toggleGrupRealisasi(idKonten, idIkon) {
+          // Dinonaktifkan demi kestabilan
+      }
+          
+          function tutupModalRealisasi() {
+              const modalUtama = document.getElementById('modalRealisasi');
+              if (modalUtama) {
+                  modalUtama.classList.add('hidden');
+              }
+          }
+          
+          // =====================================================================
+          // INITIALIZATION RUNNER: PEMICU UTAMAKAN SINKRONISASI DATA LIVE
+          // =====================================================================
+          if (typeof updateStats === 'function') {
+              updateStats(); 
+          }
+      
+          // Jalankan fungsi sinkronisasi data kependudukan secara otomatis
+          sinkronisasiKependudukanBeranda();
+          
+      
+      // =====================================================================
+      // SINKRONISASI LIVE DATA KEPENDUDUKAN DARI FORM DASHBOARD ADMIN
+      // =====================================================================
+      function sinkronisasiKependudukanBeranda() {
+          const dataLokal = localStorage.getItem('desa_kependudukan');
+          
+          const elKK = document.getElementById('berandaTotalKK');
+          const elPenduduk = document.getElementById('berandaTotalPenduduk');
+      
+          if (dataLokal) {
+              const data = JSON.parse(dataLokal);
+              
+              // Tampilkan data ke beranda dengan format ribuan yang rapi (.toLocaleString)
+              if (elPenduduk) elPenduduk.innerText = (parseInt(data.totalPenduduk) || 0).toLocaleString('id-ID');
+              if (elKK) elKK.innerText = (parseInt(data.totalKK) || 0).toLocaleString('id-ID');
+          } else {
+              // Angka default jika admin belum pernah menginput data sama sekali
+              if (elPenduduk) elPenduduk.innerText = "0";
+              if (elKK) elKK.innerText = "0";
+          }
+      }
+      
+      
+      function hitungPaguDanRealisasiBeranda() {
+          const elPaguStatistik = document.getElementById('berandaPaguDanaDesa');
+          const elPersenStatistik = document.getElementById('berandaPersenRealisasi');
+      
+          // ==========================================
+          // 1. AMBIL NILAI PAGU DANA DESA (SUDAH BERHASIL)
+          // ==========================================
+          const elTargetAsli = document.getElementById('totalPendapatanMurni');
+          if (elPaguStatistik) {
+              if (elTargetAsli && elTargetAsli.innerText.trim() !== "" && elTargetAsli.innerText.trim() !== "Rp 0") {
+                  elPaguStatistik.innerText = elTargetAsli.innerText;
+              } else {
+                  const dataAnggaranRaw = localStorage.getItem('desa_anggaran');
+                  if (dataAnggaranRaw) {
+                      try {
+                          let totalPaguBackup = 0;
+                          const dataAnggaran = JSON.parse(dataAnggaranRaw);
+                          dataAnggaran.forEach(item => {
+                              totalPaguBackup += parseInt(item.nilai || 0);
+                          });
+                          if (totalPaguBackup > 0) {
+                              elPaguStatistik.innerText = "Rp " + totalPaguBackup.toLocaleString('id-ID');
+                          }
+                      } catch (e) { console.log(e); }
+                  }
+              }
+          }
+      
+          // ==========================================
+          // 2. HITUNG PERSENTASE RATA-RATA PROGRES KEGIATAN RKP
+          // ==========================================
+          // Mengambil data RKP asli yang di-update oleh admin
+          const dataRKPRaw = localStorage.getItem('rkpData');
+          
+          if (elPersenStatistik) {
+              if (dataRKPRaw) {
+                  try {
+                      const dataRKP = JSON.parse(dataRKPRaw);
+                      
+                      if (dataRKP.length > 0) {
+                          let totalSemuaProgres = 0;
+                          
+                          dataRKP.forEach(kegiatan => {
+                              // Ambil nilai progres dari admin (misal: "75%" atau 50)
+                              let progresMentah = kegiatan.progres ? kegiatan.progres.toString() : "0";
+                              // Bersihkan karakter teks, hanya ambil angka murni
+                              let angkaProgres = parseInt(progresMentah.replace(/[^0-9]/g, '')) || 0;
+                              
+                              // Cek juga status teks untuk validasi keamanan data
+                              const statusTeks = kegiatan.status ? kegiatan.status.toString().toLowerCase().trim() : '';
+                              if (statusTeks === 'selesai' && angkaProgres < 100) {
+                                  angkaProgres = 100;
+                              }
+                              
+                              // Akumulasikan seluruh progres kegiatan
+                              totalSemuaProgres += angkaProgres;
+                          });
+                          
+                          // Rumus: Total akumulasi progres dibagi dengan banyaknya jumlah kegiatan
+                          const rataRataPersen = totalSemuaProgres / dataRKP.length;
+                          
+                          // Tampilkan ke kartu statistik (Bulatkan 1 angka di belakang koma jika desimal, misal: 66.7%)
+                          elPersenStatistik.innerText = rataRataPersen % 1 === 0 ? 
+                              rataRataPersen + "%" : 
+                              rataRataPersen.toFixed(1) + "%";
+                      } else {
+                          elPersenStatistik.innerText = "0%";
+                      }
+                  } catch (error) {
+                      console.log("Gagal mengalkulasi progres kegiatan:", error);
+                      elPersenStatistik.innerText = "0%";
+                  }
+              } else {
+                  elPersenStatistik.innerText = "0%";
+              }
+          }
+      }
+      
+      
+      function tutupModalRealisasi() {
+          const modalUtama = document.getElementById('modalRealisasi');
+          if (modalUtama) {
+              modalUtama.classList.add('hidden');
+          }
+      }
+      
+      // =====================================================================
+      // RUNNER SINKRONISASI DATA UTAMA LIVE KETIKA HALAMAN DIBUKA
+      // =====================================================================
+      if (typeof updateStats === 'function') {
+          updateStats(); 
+      }
+  
+      // 1. Jalankan hitungan statistik kependudukan (Total Penduduk & KK)
+      sinkronisasiKependudukanBeranda();
+  
+      // 2. Jalankan hitungan anggaran Pagu & Persentase Realisasi RKP 100%
+      hitungPaguDanRealisasiBeranda();
+      
+      
+      // =====================================================================
+      // RUNNER SINKRONISASI AKHIR
+      // =====================================================================
+      try {
+        if (typeof sinkronisasiKependudukanBeranda === 'function') {
+            sinkronisasiKependudukanBeranda();
+        }
+      } catch (e) {
+          console.log("Kependudukan belum siap:", e);
+      }
+  
+      try {
+          // Jeda 300ms memberikan waktu bagi fungsi bawaan menu realisasi 
+          // untuk mencetak total pendapatan ke layar terlebih dahulu
+          setTimeout(function() {
+              hitungPaguDanRealisasiBeranda();
+          }, 350);
+      } catch (e) {
+          console.log("Pagu/Realisasi belum siap:", e);
+      }
+      
+    
+    function bukaPdf(urlDokumen) {
+        if(urlDokumen) {
+            window.open(urlDokumen, '_blank');
+        } else {
+            alert("Dokumen tidak tersedia atau belum diunggah.");
+        }
+    }
+    
+    
+    // Membaca data PDF dari Firebase Realtime Database secara Realtime
+      dbRealtime.ref('desa_dokumen_pdf').on('value', (snapshot) => {
+          const container = document.getElementById('daftarPdfUser');
+          container.innerHTML = ''; // Kosongkan kontainer sebelum render
+      
+          if (snapshot.exists()) {
+              const data = snapshot.val();
+              
+              Object.keys(data).forEach((key) => {
+                  const item = data[key];
+                  
+                  const tr = document.createElement('tr');
+                  tr.className = "border-b border-slate-50 hover:bg-slate-50/50 transition";
+                  tr.innerHTML = `
+                      <td class="p-3 font-bold text-blue-600">${item.jenis}</td>
+                      <td class="p-3 text-slate-600">${item.keterangan}</td>
+                      <td class="p-3 text-center">
+                          <button onclick="downloadPdfLangsung('${item.fileData}', '${item.keterangan}.pdf')" 
+                                  class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center space-x-1 transition shadow-sm text-[11px]">
+                              <i class="fas fa-download"></i>
+                              <span>Unduh Berkas</span>
+                          </button>
+                      </td>
+                  `;
+                  container.appendChild(tr);
+              });
+          } else {
+              container.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-400 italic">Belum ada dokumen yang dipublikasikan.</td></tr>`;
+          }
+      });
+
+      // Fungsi untuk men-download file dari string Base64 tanpa perlu hosting/Google Drive
+      function downloadPdfLangsung(base64Data, filename) {
+          const link = document.createElement('a');
+          link.href = base64Data;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+      }
+      
+      
+      
+      // Membaca data dokumen perencanaan secara realtime dari Firebase
+// Catatan: Pastikan nama variabel 'database' di bawah ini sama dengan inisialisasi Firebase Anda (misal: db atau dbRealtime)
+database.ref('desa_dokumen_pdf').on('value', (snapshot) => {
+    const container = document.getElementById('daftarPdfUser');
+    if (!container) return; // Mengamankan jika elemen HTML belum siap
+    
+    container.innerHTML = ''; // Mengosongkan data contoh statis sebelum diisi dari database
+
+    if (snapshot.exists()) {
+        const data = snapshot.val();
+        
+        Object.keys(data).forEach((key) => {
+            const item = data[key];
+            
+            // Mengambil sumber file (baik berupa Base64 ataupun link path lokal folder)
+            const sumberBerkas = item.fileData || item.pathFile || "";
+            
+            const tr = document.createElement('tr');
+            // Menambahkan style cursor-pointer agar saat diarahkan mouse, kursor berubah menjadi lambang jari tangan (bisa diklik)
+            tr.className = "border-b border-slate-100 hover:bg-blue-50/50 transition cursor-pointer font-medium text-slate-700";
+            
+            // Memberikan perintah: JIKA BARIS DIKLIK, MAKA JALANKAN FUNGSI BUKA PDF
+            tr.setAttribute('onclick', `bukaDanUnduhPdf('${sumberBerkas}')`);
+            
+            tr.innerHTML = `
+                <td class="p-3.5 font-bold text-blue-600">${item.jenis}</td>
+                <td class="p-3.5 text-slate-600">${item.keterangan}</td>
+            `;
+            container.appendChild(tr);
+        });
+    } else {
+        // Tampilan jika database Anda masih kosong
+        container.innerHTML = `
+            <tr>
+                <td colspan="2" class="p-4 text-center text-gray-400 italic">Belum ada dokumen perencanaan resmi yang diunggah.</td>
+            </tr>`;
+    }
+});
+
+// Fungsi Utama: Membuka berkas di tab baru browser warga dan mengizinkan download langsung
+function bukaDanUnduhPdf(sumber) {
+    if (!sumber) {
+        alert("Maaf, berkas PDF untuk dokumen ini tidak ditemukan atau belum diunggah.");
+        return;
+    }
+
+    const win = window.open();
+    if (!win) {
+        alert("Gagal membuka tab baru. Mohon aktifkan izin pop-up pada browser Anda.");
+        return;
+    }
+
+    // Sistem Otomatis Mendeteksi Format File
+    if (sumber.startsWith('data:application/pdf') || sumber.startsWith('data:text/plain')) {
+        // Jika data dari database berupa string Base64 (Upload lokal)
+        win.document.write(`
+            <html>
+            <head><title>Pratinjau Dokumen Perencanaan Desa</title></head>
+            <body style="margin:0; padding:0; overflow:hidden;">
+                <iframe src="${sumber}" frameborder="0" style="width:100%; height:100vh; border:none;" allowfullscreen></iframe>
+            </body>
+            </html>
+        `);
+    } else {
+        // Jika data berupa URL Link internet atau jalur folder lokal (contoh: dokumen/apbdes.pdf)
+        win.location.href = sumber;
+    }
+}
+
+
+
+    
+</script>
+
+<!-- ===================================================================== -->
+    <!-- START: MODAL REALISASI DANA DESA DENGAN TATA LETAK 3 KOLOM SEJAJAR    -->
+    <!-- ===================================================================== -->
+    <div id="modalRealisasi" class="fixed inset-0 bg-slate-950 hidden z-[9999] flex flex-col w-screen h-screen overflow-hidden animate-fade-in">
+  <div class="bg-slate-50 w-full h-full flex flex-col">
+    
+    <div class="p-5 bg-white border-b border-slate-200 flex items-center justify-between flex-shrink-0 shadow-sm px-6 md:px-8">
+      <div class="flex items-center space-x-3.5">
+        <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100 flex-shrink-0">
+          <i class="fas fa-chart-pie text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-black text-slate-800 uppercase tracking-tight leading-none">Ikhtisar Realisasi Pagu Anggaran</h3>
+          <p class="text-[11px] text-slate-400 font-bold mt-1">Data Ringkasan Transparansi dan Proporsi Penggunaan Dana Desa</p>
+        </div>
+      </div>
+      <button onclick="tutupModalRealisasi()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition border border-slate-200 active:scale-95">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+    </div>
+
+    <div class="p-6 md:p-8 overflow-y-auto flex-1 space-y-8 bg-slate-50/50">
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch w-full max-w-7xl mx-auto">
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[220px]">
+            <div>
+                <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide mb-0.5">Proporsi Pendapatan Desa</h3>
+                <p class="text-[9px] text-slate-400 font-bold mb-3">Persentase Grafik Asal Pagu Anggaran</p>
+            </div>
+            <div class="relative w-full h-40 flex items-center justify-center mx-auto">
+                <canvas id="chartProporsiDanaModal"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between border-l-4 border-l-emerald-500 min-h-[220px]">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide mb-0.5">Total Pendapatan (Pagu)</h3>
+                    <p class="text-[9px] text-slate-400 font-bold">Akumulasi Seluruh Sumber Anggaran</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-sm flex-shrink-0">
+                    <i class="fas fa-wallet text-xs"></i>
+                </div>
+            </div>
+            <div class="my-auto pt-4">
+                <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest block mb-0.5">Jumlah Masuk</span>
+                <h2 id="totalPendapatanMurni" class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Rp 0</h2>
+            </div>
+            <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-[9px] font-bold text-slate-400">
+                <span>Sinkronisasi</span>
+                <span class="text-emerald-600 font-black bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wide text-[8px]">Otomatis</span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between border-l-4 border-l-amber-500 min-h-[220px]">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide mb-0.5">Total Belanja RKP</h3>
+                    <p class="text-[9px] text-slate-400 font-bold">Total Rencana Anggaran Keluar</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shadow-sm flex-shrink-0">
+                    <i class="fas fa-shopping-bag text-xs"></i>
+                </div>
+            </div>
+            <div class="my-auto pt-4">
+                <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest block mb-0.5">Jumlah Terpakai</span>
+                <h2 id="totalBelanjaMurni" class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Rp 0</h2>
+            </div>
+            <div class="pt-3 border-t border-slate-100 mt-4 flex items-center justify-between text-[9px] font-bold text-slate-400">
+                <span>Rasio Distribusi</span>
+                <span id="persentaseTerpakai" class="text-amber-600 font-black bg-amber-50 px-2 py-0.5 rounded border border-amber-100 text-[9px]">0%</span>
+            </div>
+        </div>
+
+      </div>
+
+      <div class="space-y-4 w-full max-w-7xl mx-auto pb-12">
+          <h4 class="text-[12px] font-black text-slate-800 uppercase tracking-tight flex items-center mb-1">
+              <span class="w-2 h-3.5 bg-blue-600 rounded-sm mr-2 block"></span> Transparansi Rincian Program per Bidang Kerja
+          </h4>
+          
+          <div id="daftarRealisasi" class="flex flex-col space-y-3.5 w-full"></div>
+          
+      </div>
+      
+      <!-- Blok Tampilan Kegiatan Prioritas Utama di Dalam Modal Realisasi -->
+          <div class="w-full max-w-7xl mx-auto space-y-3 mb-6">
+              <h4 class="text-[12px] font-black text-slate-800 uppercase tracking-tight flex items-center mb-1">
+                  <span class="w-2 h-3.5 bg-orange-500 rounded-sm mr-2 block"></span> Kegiatan Prioritas Utama Ohoi / Desa
+              </h4>
+              <div id="modalContainerPrioritas" class="w-full"></div>
+          </div>
+
+    </div>
+  </div>
+</div>
+    <!-- ===================================================================== -->
+    <!-- END: MODAL REALISASI DANA DESA DENGAN TATA LETAK 3 KOLOM SEJAJAR      -->
+    <!-- ===================================================================== -->
 </body>
 </html>
+
+
