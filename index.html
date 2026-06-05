@@ -336,30 +336,28 @@
         <div id="modalPdfWarga" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 hidden flex justify-end transition-opacity duration-300">
           <div class="bg-slate-50 w-full h-full shadow-2xl flex flex-col transition-all duration-300">
             
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 max-w-7xl mx-auto my-6">
-                <h3 class="text-sm font-black text-slate-800 uppercase mb-4 flex items-center">
-                    <span class="w-2 h-3.5 bg-blue-600 rounded-sm mr-2 block"></span> Dokumen Perencanaan & APBDes Resmi
-                </h3>
-                <p class="text-xs text-slate-500 mb-3">*Klik pada baris dokumen untuk membuka dan mengunduh berkas PDF</p>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-600 font-bold uppercase border-b border-slate-200">
-                                <th class="p-3.5">Jenis Dokumen</th>
-                                <th class="p-3.5">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody id="daftarPdfUser">
-                            </tbody>
-                    </table>
+            <!-- Header Halaman (Identik dengan Dokumentasi Kegiatan) -->
+            <div class="p-4 sm:p-6 bg-white border-b border-slate-200 flex justify-between items-center flex-shrink-0 w-full">
+              <div class="flex items-center space-x-3 overflow-hidden">
+                <div class="p-2 bg-red-50 text-red-600 rounded-xl border border-red-100 flex-shrink-0">
+                  <i class="fas fa-folder-open text-base sm:text-lg"></i>
                 </div>
-                
+                <div class="overflow-hidden">
+                  <h2 class="text-lg sm:text-xl font-bold text-slate-800 truncate">Berkas Perencanaan Resmi & Regulasi</h2>
+                  <p class="text-[11px] sm:text-xs text-slate-400 truncate">Sistem informasi transparansi dokumen pembangunan dan rencana anggaran pendapatan desa</p>
+                </div>
+              </div>
+              <button onclick="tutupModalPdf()" class="p-2 sm:p-2.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition flex-shrink-0">
+               <i class="fas fa-times text-base sm:text-lg"></i>
+              </button>
             </div>
-
-
             
-            
+            <!-- Area Konten Grid Dokumen Lebar Maksimal -->
+            <div class="p-4 sm:p-6 md:p-8 overflow-y-auto flex-1 bg-slate-100/50 flex justify-center">
+              <div id="daftarPdfWarga" class="grid grid-cols-1 gap-6 sm:gap-8 w-full max-w-7xl mx-auto">
+                <!-- Data PDF di-render otomatis secara full-width di sini -->
+              </div>
+            </div>
         
           </div>
         </div>
@@ -521,7 +519,7 @@
         dbRealtime.ref('database_desa/').on('value', (snapshot) => {
             const dataCloud = snapshot.val();
             if (dataCloud) {
-                console.log("🔄 Menyelaraskan data lokal dengan Cloud Firebase...");
+                console.log("ߔ Menyelaraskan data lokal dengan Cloud Firebase...");
                 
                 // Loop data cloud dan tulis ulang ke localStorage warga secara otomatis
                 for (const key in dataCloud) {
@@ -1685,129 +1683,7 @@
       }
       
     
-    function bukaPdf(urlDokumen) {
-        if(urlDokumen) {
-            window.open(urlDokumen, '_blank');
-        } else {
-            alert("Dokumen tidak tersedia atau belum diunggah.");
-        }
-    }
     
-    
-    // Membaca data PDF dari Firebase Realtime Database secara Realtime
-      dbRealtime.ref('desa_dokumen_pdf').on('value', (snapshot) => {
-          const container = document.getElementById('daftarPdfUser');
-          container.innerHTML = ''; // Kosongkan kontainer sebelum render
-      
-          if (snapshot.exists()) {
-              const data = snapshot.val();
-              
-              Object.keys(data).forEach((key) => {
-                  const item = data[key];
-                  
-                  const tr = document.createElement('tr');
-                  tr.className = "border-b border-slate-50 hover:bg-slate-50/50 transition";
-                  tr.innerHTML = `
-                      <td class="p-3 font-bold text-blue-600">${item.jenis}</td>
-                      <td class="p-3 text-slate-600">${item.keterangan}</td>
-                      <td class="p-3 text-center">
-                          <button onclick="downloadPdfLangsung('${item.fileData}', '${item.keterangan}.pdf')" 
-                                  class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center space-x-1 transition shadow-sm text-[11px]">
-                              <i class="fas fa-download"></i>
-                              <span>Unduh Berkas</span>
-                          </button>
-                      </td>
-                  `;
-                  container.appendChild(tr);
-              });
-          } else {
-              container.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-400 italic">Belum ada dokumen yang dipublikasikan.</td></tr>`;
-          }
-      });
-
-      // Fungsi untuk men-download file dari string Base64 tanpa perlu hosting/Google Drive
-      function downloadPdfLangsung(base64Data, filename) {
-          const link = document.createElement('a');
-          link.href = base64Data;
-          link.download = filename;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-      }
-      
-      
-      
-      // Membaca data dokumen perencanaan secara realtime dari Firebase
-// Catatan: Pastikan nama variabel 'database' di bawah ini sama dengan inisialisasi Firebase Anda (misal: db atau dbRealtime)
-database.ref('desa_dokumen_pdf').on('value', (snapshot) => {
-    const container = document.getElementById('daftarPdfUser');
-    if (!container) return; // Mengamankan jika elemen HTML belum siap
-    
-    container.innerHTML = ''; // Mengosongkan data contoh statis sebelum diisi dari database
-
-    if (snapshot.exists()) {
-        const data = snapshot.val();
-        
-        Object.keys(data).forEach((key) => {
-            const item = data[key];
-            
-            // Mengambil sumber file (baik berupa Base64 ataupun link path lokal folder)
-            const sumberBerkas = item.fileData || item.pathFile || "";
-            
-            const tr = document.createElement('tr');
-            // Menambahkan style cursor-pointer agar saat diarahkan mouse, kursor berubah menjadi lambang jari tangan (bisa diklik)
-            tr.className = "border-b border-slate-100 hover:bg-blue-50/50 transition cursor-pointer font-medium text-slate-700";
-            
-            // Memberikan perintah: JIKA BARIS DIKLIK, MAKA JALANKAN FUNGSI BUKA PDF
-            tr.setAttribute('onclick', `bukaDanUnduhPdf('${sumberBerkas}')`);
-            
-            tr.innerHTML = `
-                <td class="p-3.5 font-bold text-blue-600">${item.jenis}</td>
-                <td class="p-3.5 text-slate-600">${item.keterangan}</td>
-            `;
-            container.appendChild(tr);
-        });
-    } else {
-        // Tampilan jika database Anda masih kosong
-        container.innerHTML = `
-            <tr>
-                <td colspan="2" class="p-4 text-center text-gray-400 italic">Belum ada dokumen perencanaan resmi yang diunggah.</td>
-            </tr>`;
-    }
-});
-
-// Fungsi Utama: Membuka berkas di tab baru browser warga dan mengizinkan download langsung
-function bukaDanUnduhPdf(sumber) {
-    if (!sumber) {
-        alert("Maaf, berkas PDF untuk dokumen ini tidak ditemukan atau belum diunggah.");
-        return;
-    }
-
-    const win = window.open();
-    if (!win) {
-        alert("Gagal membuka tab baru. Mohon aktifkan izin pop-up pada browser Anda.");
-        return;
-    }
-
-    // Sistem Otomatis Mendeteksi Format File
-    if (sumber.startsWith('data:application/pdf') || sumber.startsWith('data:text/plain')) {
-        // Jika data dari database berupa string Base64 (Upload lokal)
-        win.document.write(`
-            <html>
-            <head><title>Pratinjau Dokumen Perencanaan Desa</title></head>
-            <body style="margin:0; padding:0; overflow:hidden;">
-                <iframe src="${sumber}" frameborder="0" style="width:100%; height:100vh; border:none;" allowfullscreen></iframe>
-            </body>
-            </html>
-        `);
-    } else {
-        // Jika data berupa URL Link internet atau jalur folder lokal (contoh: dokumen/apbdes.pdf)
-        win.location.href = sumber;
-    }
-}
-
-
-
     
 </script>
 
