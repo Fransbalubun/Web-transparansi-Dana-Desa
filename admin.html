@@ -1,252 +1,2209 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf-plugin-autotable.min.js"></script>
+  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Transparansi Dana Desa</title>
+    <title>Sistem Informasi Transparansi Dana Desa - Ohoi/Desa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- STYLES DASAR (SENADA DENGAN INDEX) --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #f1f5f9; color: #334155; padding-bottom: 60px; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 30px 15px; }
-        
-        /* --- HEADER CONTROL PANEL --- */
-        header { background: #1e293b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #10b981; }
-        .btn-kembali { background: #64748b; color: white; text-decoration: none; padding: 8px 15px; border-radius: 6px; font-size: 13px; font-weight: bold; }
-        .btn-kembali:hover { background: #475569; }
-        
-        /* --- LAYOUT MENU FORM --- */
-        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px; }
-        .card-form { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 5px solid #10b981; }
-        .card-form.blue { border-top-color: #2563eb; }
-        .card-form.orange { border-top-color: #f59e0b; }
-        .card-form.red { border-top-color: #ef4444; }
-        
-        h3 { margin-bottom: 18px; color: #1e293b; font-size: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; font-weight: bold; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; color: #475569; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; color: #334155; }
-        .form-control:focus { outline: none; border-color: #10b981; }
-        
-        /* --- BUTTONS --- */
-        .btn-simpan { background: #10b981; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; margin-top: 5px; }
-        .btn-simpan:hover { background: #059669; }
-        .btn-blue { background: #2563eb; }
-        .btn-blue:hover { background: #1d4ed8; }
-        .btn-orange { background: #f59e0b; }
-        .btn-orange:hover { background: #d97706; }
-        
-        /* --- LIST PREVIEW DI ADMIN --- */
-        .list-preview { margin-top: 15px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px; max-height: 150px; overflow-y: auto; }
-        .preview-item { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px solid #e2e8f0; }
-        .preview-item:last-child { border-bottom: none; }
-        .btn-hapus { background: #ef4444; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+        .image-preview { width: 55px; height: 55px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .section { display: none; }
+        .section.active { display: block; }
     </style>
-</head>
-<body>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyD4K2VmW2YpCwcFP3hf8bNha0e8QFoByEk",
+        authDomain: "website-transparansi-dana-desa.firebaseapp.com",
+        databaseURL: "https://website-transparansi-dana-desa-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "website-transparansi-dana-desa",
+        storageBucket: "website-transparansi-dana-desa.firebasestorage.app",
+        messagingSenderId: "517937190530",
+        appId: "1:517937190530:web:6e7bab16de9df63245469b",
+        measurementId: "G-76XE1JBJ5M"
+      };
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      const dbRealtime = firebase.database();
+    </script>
+    
 
-    <div class="container">
-        <header>
-            <div>
-                <h2 style="color: #10b981; font-size: 22px;">Control Panel Administrator</h2>
-                <p style="font-size: 13px; color: #94a3b8; margin-top: 2px;">Kelola dan perbarui seluruh data informasi publik pada index.html</p>
-            </div>
-            <a href="index.html" class="btn-kembali">← Lihat Website Utama</a>
+</head>
+<body class="bg-gray-100 font-sans flex overflow-hidden h-screen">
+
+    <aside class="w-64 bg-slate-900 text-white flex-shrink-0 hidden md:flex flex-col">
+        <div class="p-6 border-b border-slate-700 bg-red-600">
+            <h1 class="text-xl font-bold flex items-center italic">
+                <i class="fas fa-landmark mr-2"></i> DASHBOARD DESA
+            </h1>
+        </div>
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto text-sm">
+            <p class="text-gray-500 uppercase text-[10px] font-bold px-3 py-2 tracking-widest">Utama</p>
+            <a href="#" onclick="showSection('ringkasan')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-800 transition"><i class="fas fa-home"></i> <span>Ringkasan</span></a>
+            <a href="#" onclick="showSection('profil')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-800 transition"><i class="fas fa-id-card"></i> <span>Input Profil Desa</span></a>
+            <button onclick="showSection('penduduk')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white text-sm font-bold">
+                <i class="fas fa-users w-5 text-center text-blue-400"></i>
+                <span>Data Penduduk</span>
+            </button>
+            <a href="#" onclick="showSection('dokumentasi-admin')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-800 transition"><i class="fas fa-images"></i> <span>Input Dokumentasi</span></a>
+
+            <p class="text-gray-500 uppercase text-[10px] font-bold px-3 py-2 tracking-widest mt-4">Perencanaan</p>
+            <a href="#" onclick="showSection('rkp')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-800 transition"><i class="fas fa-file-signature"></i> <span>Input RKP Desa</span></a>
+            <a href="#" onclick="showSection('anggaran')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-800 transition"><i class="fas fa-wallet"></i> <span>Kelola Anggaran</span></a>
+            <button onclick="showSection('pdf'); if(typeof toggleSidebar === 'function') toggleSidebar();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+              <i class="fas fa-file-pdf "></i>
+              <span class="text-sm font-medium">Upload RKP dan APBDes</span>
+            </button>
+            
+            <p class="text-gray-500 uppercase text-[10px] font-bold px-3 py-2 tracking-widest mt-4">Pelaksanaan</p>
+            <a href="#" onclick="showSection('prioritas')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-800 transition"><i class="fas fa-star text-yellow-500"></i> <span>Prioritas Pembangunan</span></a>
+            <a href="#" onclick="showSection('progres')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-800 transition"><i class="fas fa-camera text-green-500"></i> <span>Update Progres & Foto</span></a>
+            
+            <a href="#" onclick="showSection('pengaduan')" class="flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition">
+                <div class="flex items-center space-x-3">
+                <i class="fas fa-bullhorn text-blue-500"></i> 
+                 <span>Pengaduan Warga</span>
+                </div>
+                  <span id="badge-aduan" class="hidden bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm animate-pulse">
+                    0
+                  </span>
+            </a>
+            
+        </nav>
+        <div class="mt-auto pt-10">
+            <button onclick="logout()" class="flex items-center space-x-3 p-3 w-full rounded-lg text-red-400 hover:bg-red-900/30 transition border border-transparent hover:border-red-800">
+        <i class="fas fa-sign-out-alt"></i> 
+        <span>keluar</span>
+             </button>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+      
+  
+        <header class="bg-white shadow-sm border-b px-8 py-4 flex justify-between items-center">
+            <h2 id="title-text" class="text-lg font-bold text-slate-700 uppercase tracking-tight">Input RKP Desa</h2>
+            <div class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center text-white font-bold shadow-md">A</div>
         </header>
 
-        <div class="grid-form">
+        <main class="flex-1 overflow-y-auto p-8">
             
-            <div class="card-form">
-                <h3>1. Input Profil Desa</h3>
-                <form id="form-profil" onsubmit="simpanProfil(event)">
-                    <div class="form-group">
-                        <label>Visi Pemerintah Desa</label>
-                        <textarea id="input-visi" class="form-control" rows="3" required placeholder="Tulis visi desa di sini..."></textarea>
+            <div id="section-ringkasan" class="section">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-red-600">
+                        <p class="text-gray-400 text-xs font-bold uppercase">Total Program RKP</p>
+                        <h3 id="stat-rkp" class="text-2xl font-black mt-1">0</h3>
                     </div>
-                    <div class="form-group">
-                        <label>Nama Kepala Desa Terpilih</label>
-                        <input type="text" id="input-kades" class="form-control" required placeholder="Contoh: Bpk. H. Supriyanto">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-600">
+                        <p class="text-gray-400 text-xs font-bold uppercase">Total Pendapatan</p>
+                        <h3 id="stat-anggaran" class="text-2xl font-black mt-1 text-blue-600">Rp 0</h3>
                     </div>
-                    <div class="form-group">
-                        <label>Masa Bakti / Periode Jabatan</label>
-                        <input type="text" id="input-bakti" class="form-control" required placeholder="Contoh: 2021 - 2027">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-green-600">
+                        <p class="text-gray-400 text-xs font-bold uppercase">Sisa Saldo</p>
+                        <h3 id="stat-saldo" class="text-2xl font-black mt-1 text-green-600">Rp 0</h3>
                     </div>
-                    <button type="submit" class="btn-simpan">Simpan Profil Desa</button>
-                </form>
+                </div>
             </div>
 
-            <div class="card-form blue">
-                <h3>2. Input Dokumentasi Kegiatan</h3>
-                <form id="form-dokumentasi" onsubmit="tambahDokumentasi(event)">
-                    <div class="form-group">
-                        <label>Link/URL Foto Kegiatan (Gunakan tautan gambar online)</label>
-                        <input type="text" id="input-img-url" class="form-control" required placeholder="Contoh: https://picsum.photos/300/200">
-                    </div>
-                    <div class="form-group">
-                        <label>Judul / Nama Kegiatan Fisik</label>
-                        <input type="text" id="input-img-title" class="form-control" required placeholder="Contoh: Pembangunan Rabat Beton Dusun II">
-                    </div>
-                    <button type="submit" class="btn-simpan btn-blue">Tambah Ke Galeri Dokumentasi</button>
-                </form>
-                <div class="list-preview" id="preview-dokumentasi">
-                    </div>
+            <div id="section-rkp" class="section active">
+                <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+                    <h3 id="form-rkp-title" class="font-bold text-lg mb-4 border-b pb-2">Tambah Kegiatan RKP</h3>
+                    <form id="formRKP" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="hidden" id="editIndex" value="-1">
+                        <div class="col-span-2">
+                            <label class="text-xs font-bold text-gray-600 uppercase">Nama Kegiatan</label>
+                            <input type="text" id="namaRKP" required class="w-full border p-2 rounded mt-1 outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Bidang Utama</label>
+                            <select id="bidangRKP" onchange="updateSubBidang()" class="w-full border p-2 rounded mt-1 outline-none">
+                                <option value="">-- Pilih Bidang --</option>
+                                <option value="01 BIDANG PENYELENGGARAN PEMERINTAHAN DESA">01. Penyelenggaraan Pemerintahan</option>
+                                <option value="02 BIDANG PELAKSANAAN PEMBANGUNAN DESA">02. Pelaksanaan Pembangunan</option>
+                                <option value="03 BIDANG PEMBINAAN KEMASYARAKATAN">03. Pembinaan Kemasyarakatan</option>
+                                <option value="04 BIDANG PEMBERDAYAAN MASYARAKAT">04. Pemberdayaan Masyarakat</option>
+                                <option value="05 BIDANG PENANGGULANGAN BENCANA, DARURAT DAN MENDESAK DESA">05. Penanggulangan Bencana/Darurat</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Sub Bidang</label>
+                            <select id="subBidangRKP" class="w-full border p-2 rounded mt-1 outline-none">
+                                <option value="">-- Pilih Bidang Dahulu --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Status</label>
+                            <select id="statusRKP" class="w-full border p-2 rounded mt-1 outline-none">
+                                <option value="Umum">Umum</option>
+                                <option value="Prioritas">Prioritas</option>
+                                <option value="Rutin">Rutin</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anggaran (Rp)</label>
+                            <input type="number" id="nilaiRKP" required class="w-full bg-slate-50 border-none p-4 rounded-2xl mt-1 font-bold text-sm outline-none focus:ring-2 focus:ring-red-600 transition">
+    
+                            <div id="status-saldo-sumber" class="mt-2 p-3 rounded-xl bg-slate-100 hidden">
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-tight">Info Saldo Sumber Dana</p>
+                            <p id="teks-saldo-sumber" class="text-xs font-bold text-slate-700">Pilih sumber dana dahulu...</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Sumber Anggaran</label>
+                            <select id="sumberDanaRKP" required class="w-full border p-2 rounded mt-1 outline-none focus:ring-2 focus:ring-red-500">
+                              <option value="">-- Pilih Sumber Anggaran --</option>
+                                <option value="DDS">Dana Desa (DDS)</option>
+                                <option value="ADD">Alokasi Dana Desa (ADD)</option>
+                                <option value="PAD">Pendapatan Asli Desa (PAD)</option>
+                                <option value="BHPR">Bagi Hasil Pajak dan Retribusi (BHPR)</option>
+                                <option value="SILPA">Silpa (SILPA)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-span-2 text-right pt-2 flex justify-end gap-2">
+                            <button type="button" id="btnBatal" onclick="resetFormRKP()" class="hidden bg-gray-500 text-white px-4 py-2 rounded font-bold transition">Batal</button>
+                            <button type="submit" id="btnSimpan" class="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700 shadow-md">Simpan Kegiatan</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-100 text-slate-600 uppercase text-[10px] font-bold">
+                            <tr>
+                                <th class="p-4 text-center w-12">#</th>
+                                <th class="p-4">Kegiatan / Sub</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4">Anggaran</th>
+                                <th class="p-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelDataRKP" class="divide-y"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="card-form orange">
-                <h3>3. Input Realisasi Anggaran (Tabel Proker)</h3>
-                <form id="form-tabel" onsubmit="tambahTabelProker(event)">
-                    <div class="form-group">
-                        <label>Nama Program Kegiatan Desa</label>
-                        <input type="text" id="input-proker" class="form-control" required placeholder="Contoh: Pengadaan Sumur Bor Air Bersih">
+            <div id="section-profil" class="section">
+                <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2 text-red-600">
+                        <i class="fas fa-edit mr-2"></i>Pengaturan Profil Desa / Ohoi
+                    </h3>
+                    <form id="formProfilDesa" class="space-y-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Visi & Misi Kepala Ohoi</label>
+                            <textarea id="visimisiProfil" rows="4" required class="w-full border p-3 rounded-xl mt-1 outline-none focus:ring-2 focus:ring-red-500 text-sm" placeholder="Tuliskan visi dan misi kepala ohoi..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Profil / Sejarah Singkat Desa</label>
+                            <textarea id="tentangProfil" rows="5" required class="w-full border p-3 rounded-xl mt-1 outline-none focus:ring-2 focus:ring-red-500 text-sm" placeholder="Tuliskan gambaran umum atau sejarah singkat desa..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Upload Bagan Struktur Organisasi (Gambar)</label>
+                            <input type="file" id="baganProfil" accept="image/*" class="w-full border p-2 rounded-xl mt-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                            
+                            <div class="mt-3">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Preview Bagan Saat Ini:</p>
+                                <div id="previewBaganContainer" class="mt-2 border p-2 rounded-xl inline-block bg-gray-50">
+                                    <span id="txtNoBagan" class="text-xs text-gray-400 italic">Belum ada gambar bagan yang diupload</span>
+                                    <img id="imgPreviewBagan" class="hidden max-h-48 rounded shadow-sm border">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right pt-2">
+                            <button type="submit" class="bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-red-700 shadow-md transition text-sm">
+                                <i class="fas fa-save mr-2"></i>Simpan Profil Desa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="section-penduduk" class="section hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight flex items-center">
+                        <i class="fas fa-users-cog text-blue-600 mr-3 p-2 bg-blue-50 border border-blue-100 rounded-xl"></i>
+                        Manajemen Data Kependudukan Ohoi/Desa
+                    </h2>
+                    <p class="text-xs text-gray-400 font-bold mt-1">Kelola data agregat Kepala Keluarga dan Total Jiwa untuk sinkronisasi ke beranda utama.</p>
+                </div>
+            
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                    <form id="formKependudukan" onsubmit="simpanDataPenduduk(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 uppercase tracking-wide mb-1.5">Total Kepala Keluarga (KK)</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 text-xs font-bold"><i class="fas fa-home"></i></span>
+                                    <input type="number" id="inputTotalKK" required class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-500 transition" placeholder="Contoh: 350">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 uppercase tracking-wide mb-1.5">Total Jiwa / Penduduk</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 text-xs font-bold"><i class="fas fa-user-friends"></i></span>
+                                    <input type="number" id="inputTotalPenduduk" required class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-500 transition" placeholder="Contoh: 1420">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="w-full md:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-sm active:scale-[0.98] cursor-pointer">
+                                <i class="fas fa-save mr-1.5"></i> Perbarui & Publikasikan Data
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-gray-100 bg-slate-50/50">
+                        <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center">
+                            <i class="fas fa-eye text-emerald-500 mr-2"></i> Data Penduduk Aktif Saat Ini (Live di Beranda)
+                        </h3>
                     </div>
-                    <div class="form-group">
-                        <label>Anggaran Pagu (Rp)</label>
-                        <input type="text" id="input-anggaran" class="form-control" required placeholder="Contoh: Rp 300.000.000">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-[10px] font-black uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                                    <th class="p-4 text-center w-16">No</th>
+                                    <th class="p-4">Total Kepala Keluarga (KK)</th>
+                                    <th class="p-4">Total Jiwa (Penduduk)</th>
+                                    <th class="p-4 text-center">Terakhir Diperbarui</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelPendudukAktif" class="text-xs divide-y divide-gray-100">
+                                </tbody>
+                        </table>
                     </div>
-                    <div class="form-group">
-                        <label>Realisasi Saldo (Rp)</label>
-                        <input type="text" id="input-realisasi" class="form-control" required placeholder="Contoh: Rp 150.000.000">
+                </div>
+            </div>
+            
+
+            <div id="section-dokumentasi-admin" class="section">
+                <div class="bg-white p-6 rounded-xl shadow-md border mb-8">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2 text-red-600">
+                        <i class="fas fa-camera mr-2"></i>Tambah Dokumentasi Kegiatan Ohoi
+                    </h3>
+                    <form id="formDokumentasi" class="space-y-4">
+                        <input type="hidden" id="editIndexDokumentasi" value="-1">
+                    
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-bold text-gray-600 uppercase">Upload Foto Dokumentasi (Max 5MB)</label>
+                                <input type="file" id="fotoDokumentasi" accept="image/*" class="w-full border p-2 rounded-xl mt-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                                <p class="text-[11px] text-gray-400 mt-1">* Format gambar (.jpg, .jpeg, .png). Maksimal ukuran file 5MB.</p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase">Preview Foto:</label>
+                                <div class="mt-1 border p-2 rounded-xl inline-block bg-gray-50 min-w-[150px] text-center">
+                                    <span id="txtNoDokumenFoto" class="text-xs text-gray-400 italic">Belum ada foto dipilih</span>
+                                    <img id="imgPreviewDokumentasi" class="hidden max-h-32 rounded shadow-sm border mx-auto">
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Keterangan / Deskripsi Kegiatan</label>
+                            <textarea id="keteranganDokumentasi" rows="3" required class="w-full border p-3 rounded-xl mt-1 outline-none focus:ring-2 focus:ring-red-500 text-sm" placeholder="Contoh: Penyerahan bantuan BLT Tahap 1 kepada warga Ohoi..."></textarea>
+                        </div>
+                    
+                        <div class="text-right pt-2">
+                            <button type="submit" id="btnSimpanDokumentasi" class="bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-red-700 shadow-md transition text-sm">
+                                <i class="fas fa-cloud-upload-alt mr-2"></i>Unggah Dokumentasi
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-gray-100">
+                        <h3 class="font-bold text-gray-700 text-sm">
+                            <i class="fas fa-list text-red-600 mr-2"></i> Koleksi Galleri Dokumentasi Desa
+                        </h3>
                     </div>
-                    <div class="form-group">
-                        <label>Status Kerja</label>
-                        <select id="input-status" class="form-control">
-                            <option value="Selesai 100%">Selesai 100%</option>
-                            <option value="Pengerjaan">Pengerjaan</option>
-                        </select>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-xl overflow-hidden shadow-sm">
+                            <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 text-[11px] font-black uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-4 text-center w-12">No</th>
+                                    <th class="p-4 text-center w-24">Foto</th>
+                                    <th class="p-4 text-left">Keterangan Kegiatan</th>
+                                    <th class="p-4 text-center w-24">Aksi</th> </tr>
+                            </thead>
+                            <tbody id="tabelDokumentasiBody">
+                                </tbody>
+                        </table>
                     </div>
-                    <button type="submit" class="btn-simpan btn-orange">Tambah Ke Tabel Realisasi</button>
-                </form>
-                <div class="list-preview" id="preview-tabel">
-                    </div>
+                </div>
             </div>
 
-            <div class="card-form red" style="border-top-color: #ef4444;">
-                <h3>4. Kotak Aduan Masuk dari Warga</h3>
-                <p style="font-size: 12px; color: #64748b; margin-bottom: 10px;">Daftar aspirasi dan keluhan yang dikirimkan oleh warga melalui halaman aduan.</p>
-                <div class="list-preview" id="preview-aduan" style="max-height: 280px; background: #fff1f2;">
-                    </div>
+            <div id="section-anggaran" class="section">
+                <div class="bg-white p-6 rounded-xl shadow-md border mb-6">
+                    <h3 class="font-bold text-lg mb-4 border-b pb-2 text-blue-800">Input Sumber Pendapatan</h3>
+                    <form id="formAnggaran" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input type="hidden" id="editIndexAnggaran" value="-1">
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Sumber Anggaran</label>
+                            <select id="sumberAnggaran" class="w-full border p-2 rounded mt-1">
+                                <option value="">-- Pilih Jenis Sumber Anggaran --</option>
+                                  <option value="DDS">Dana Desa (DDS)</option>
+                                  <option value="ADD">Alokasi Dana Desa (ADD)</option>
+                                  <option value="PAD">Pendapatan Asli Desa (PAD)</option>
+                                  <option value="BHPR">Bagi Hasil Pajak dan Retribusi (BHPR)</option>
+                                  <option value="SILPA">Silpa (SILPA)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-600 uppercase">Nilai (Rp)</label>
+                            <input type="number" id="nilaiAnggaran" required class="w-full border p-2 rounded mt-1">
+                        </div>
+                        <div class="col-span-2 text-right">
+                            <button type="submit" class="bg-blue-700 text-white px-6 py-2 rounded font-bold hover:bg-blue-800">Simpan Anggaran</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-blue-50 text-blue-900 uppercase text-[10px] font-bold">
+                            <tr>
+                                <th class="p-4">Sumber Anggaran</th>
+                                <th class="p-4">Nilai</th>
+                                <th class="p-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelDaftarAnggaran" class="divide-y">
+                            </tbody>
+                    </table>
+                </div>
             </div>
 
-        </div>
+            <div id="section-prioritas" class="section">
+                <h3 class="font-bold text-xl mb-6 text-slate-800 tracking-tight"><i class="fas fa-star text-yellow-500 mr-2"></i>Prioritas Pembangunan</h3>
+                <div id="containerPrioritas" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+
+            <div id="section-progres" class="section">
+                <h3 class="font-bold text-xl mb-6 text-slate-800">Update Progres & Bukti Foto</h3>
+                <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-800 text-white uppercase text-[10px]">
+                            <tr>
+                                <th class="p-4">Kegiatan / Bidang</th>
+                                <th class="p-4">Foto Bukti</th>
+                                <th class="p-4">Progres (%)</th>
+                                <th class="p-4">Update Data</th>
+                                <th class="p-4">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelProgres" class="divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="section-pdf" class="section p-6 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-gray-200 pb-4">
+                    <div>
+                        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Upload Dokumen Perencanaan</h1>
+                        <p class="text-sm text-gray-500 mt-1">Kelola publikasi berkas resmi RKP Desa dan APBDes dalam format PDF terbuka</p>
+                    </div>
+                </div>
+            
+                <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm">
+                    <form id="formKhususPdf" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Jenis Dokumen</label>
+                                <select id="pdfJenis" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                                    <option value="">-- Pilih Jenis --</option>
+                                    <option value="RKP Desa">RKP Desa (Rencana Kerja Pemerintah)</option>
+                                    <option value="APBDes">APBDes (Anggaran Pendapatan & Belanja)</option>
+                                    <option value="Laporan Realisasi">Laporan Realisasi Anggaran</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Keterangan / Nama Dokumen</label>
+                                <input type="text" id="pdfKeterangan" placeholder="Contoh: APBDes Ohoi Tahun Anggaran 2026" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">File PDF (Maks 1.5MB)</label>
+                                <input type="file" id="pdfFile" accept="application/pdf" class="w-full px-2 py-1.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-2">
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-xl transition flex items-center space-x-2 shadow-sm">
+                                <i class="fas fa-cloud-upload-alt text-sm"></i>
+                                <span>Terbitkan Dokumen</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            
+                <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-gray-100 bg-gray-50/50">
+                        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide">Daftar Berkas Terpublikasi</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900 text-white text-[11px] font-bold uppercase tracking-wider border-b border-slate-800">
+                                    <th class="p-4 text-center w-12">No</th>
+                                    <th class="p-4">Jenis</th>
+                                    <th class="p-4">Keterangan Dokumen</th>
+                                    <th class="p-4 text-center w-28">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelPdfAdmin" class="divide-y divide-gray-100 text-sm text-slate-700">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-pengaduan" class="section">
+               <div class="flex justify-between items-center mb-6">
+               <h3 class="font-bold text-xl text-slate-800 tracking-tight">
+               <i class="fas fa-bullhorn text-blue-600 mr-2"></i>Manajemen Pengaduan
+               </h3>
+        
+                    <div class="flex gap-2 items-center">
+                            <select id="bulanLaporan" class="bg-gray-50 border border-gray-200 text-gray-700 text-[10px] rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+                                <option value="1">Januari</option>
+                                <option value="2">Februari</option>
+                                <option value="3">Maret</option>
+                                <option value="4">April</option>
+                                <option value="5">Mei</option>
+                                <option value="6">Juni</option>
+                                <option value="7">Juli</option>
+                                <option value="8">Agustus</option>
+                                <option value="9">September</option>
+                                <option value="10">Oktober</option>
+                                <option value="11">November</option>
+                                <option value="12">Desember</option>
+                            </select>
+                            
+                            <button onclick="cetakLaporanBulanan()" class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold py-2 px-4 rounded-lg flex items-center transition shadow-lg shadow-red-100">
+                                <i class="fas fa-file-pdf mr-2"></i> CETAK PDF LAPORAN
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                        <div class="p-4 bg-slate-50 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="font-bold text-gray-700 text-sm flex items-center">
+                                <i class="fas fa-comments text-red-600 mr-2"></i> Daftar Dokumen Pengaduan & Aspirasi Warga
+                            </h3>
+                            <span class="text-[10px] font-bold text-gray-400 bg-white px-3 py-1 rounded-full border">
+                                Urutan Terbaru di Atas
+                            </span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-100/80 text-gray-500 font-bold text-xs uppercase tracking-wider border-b">
+                                        <th class="p-4 w-44">Tanggal Masuk</th>
+                                        <th class="p-4 w-48">Identitas Pelapor</th>
+                                        <th class="p-4">Isi Aduan / Keluhan</th>
+                                        <th class="p-4 w-44 text-center">Status Respon</th>
+                                        <th class="p-4 w-44 text-center">Aksi Operasional</th>
+                                    </tr>
+                                </thead>
+                                
+                                <tbody id="aduanTableBody" class="divide-y divide-gray-100 text-sm text-gray-600">
+                                    <tr>
+                                        <td colspan="5" class="p-8 text-center text-gray-400 italic">
+                                            <i class="fas fa-spinner fa-spin mr-2"></i> Memuat data aduan masyarakat...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+            </div>
     </div>
+  
 
     <script>
-        window.onload = function() {
-            // Load data profil lama jika ada
-            if(localStorage.getItem('visi')) document.getElementById('input-visi').value = localStorage.getItem('visi');
-            if(localStorage.getItem('kades')) document.getElementById('input-kades').value = localStorage.getItem('kades');
-            if(localStorage.getItem('bakti')) document.getElementById('input-bakti').value = localStorage.getItem('bakti');
-            
-            // Tampilkan list preview galeri, tabel, dan aduan
-            renderPreviewGaleri();
-            renderPreviewTabel();
-            renderPreviewAduan();
+      
+      
+        // Proteksi halaman admin
+        if(localStorage.getItem("isLogin") !== "true"){
+        alert("Silakan login terlebih dahulu!");
+             window.location.href = "index.html";
+        }
+
+      
+      function updateBadgeAduan() {
+    const listAduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+    const badge = document.getElementById('badge-aduan');
+    
+    // Hitung aduan yang statusnya bukan 'Selesai' dan bukan 'Diproses' (masih baru)
+    // Atau Anda bisa sesuaikan filter ini sesuai keinginan
+    const jumlahBaru = listAduan.filter(item => item.status === 'Baru' || item.status === 'Diterima' || !item.status).length;
+
+    if (jumlahBaru > 0) {
+        badge.innerText = jumlahBaru;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+// Panggil fungsi ini di dalam fungsi updateStats() agar otomatis terupdate setiap ada perubahan
+// Masukkan baris ini di baris terakhir fungsi updateStats() Anda:
+function updateStats() {
+    // ... kode statistik lainnya ...
+    updateBadgeAduan(); // <-- TAMBAHKAN INI
+    
+    if (typeof renderTabelPendudukAdmin === 'function') {
+        renderTabelPendudukAdmin();
+    }
+    sinkronkanKeFirebase();
+
+}
+
+// Tambahkan juga di bagian bawah script agar langsung jalan saat halaman dimuat
+updateBadgeAduan();
+      
+      function hapusAduan(idx) {
+        if(confirm("Hapus data pengaduan ini?")) {
+           let listAduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+           listAduan.splice(idx, 1);
+           localStorage.setItem('desa_aduan', JSON.stringify(listAduan));
+           sinkronkanKeFirebase();
+           renderAduanAdmin();
+        }
+        sinkronkanKeFirebase();
+      }
+      
+        const dataSub = {
+            "01 BIDANG PENYELENGGARAN PEMERINTAHAN DESA": [
+                "01.01. Penyelenggaran Belanja Siltap, Tunjangan dan Operasional Pemerintahan Desa",
+                "01.02. Penyediaan Sarana Prasarana Pemerintahan Desa",
+                "01.03. Administrasi Kependudukan, Pencatatan Sipil, Statistik dan Kearsipan",
+                "01.04. Tata Praja Pemerintahan, Perencanaan, Keuangan dan Pelaporan",
+                "01.05. Sub Bidang Pertanahan"
+            ],
+            "02 BIDANG PELAKSANAAN PEMBANGUNAN DESA": [
+                "02.01. Sub Bidang Pendidikan",
+                "02.02. Sub Bidang Kesehatan",
+                "02.03. Sub Bidang Pekerjaan Umum dan Penataan Ruang",
+                "02.04. Sub Bidang Kawasan Pemukiman",
+                "02.05. Sub Bidang Kehutanan dan Lingkungan Hidup",
+                "02.06. Sub Bidang Perhubungan, Komunikasi dan Informatika",
+                "02.07. Sub Bidang Energi dan Sumberdaya Mineral",
+                "02.08. Sub Bidang Pariwisata"
+            ],
+            "03 BIDANG PEMBINAAN KEMASYARAKATAN": [
+                "03.01. Sub Bidang Ketenteraman, Ketertiban Umum dan Perlindungan Masyarakat",
+                "03.02. Sub Bidang Kebudayaan dan Keagamaan",
+                "03.03. Sub Bidang Kepemudaan dan Olahraga",
+                "03.04. Sub Bidang Kelembagaan Masyarakat"
+            ],
+            "04 BIDANG PEMBERDAYAAN MASYARAKAT": [
+                "04.01. Sub Bidang Kelautan dan Perikanan",
+                "04.02. Sub Bidang Pertanian dan Peternakan",
+                "04.03. Sub Bidang Peningkatan Kapasitas Aparatur Desa",
+                "04.04. Sub Bidang Pemberdayaan Perempuan, Perlindungan Anak dan Keluarga",
+                "04.05. Sub Bidang Koperasi, Usaha Micro Kecil dan Menengah (UMKM)",
+                "04.06. Sub Bidang Dukungan Penanaman Modal",
+                "04.07. Sub Bidang Perdagangan dan Perindustrian"
+            ],
+            "05 BIDANG PENANGGULANGAN BENCANA, DARURAT DAN MENDESAK DESA": [
+                "05.01. Sub Bidang Penanggulangan Bencana",
+                "05.02. Sub Bidang Keadaan Darurat",
+                "05.03. Sub Bidang Keadaan Mendesak"
+            ]
         };
 
-        // 1. Simpan Profil Desa
-        function simpanProfil(e) {
-            e.preventDefault();
-            localStorage.setItem('visi', document.getElementById('input-visi').value);
-            localStorage.setItem('kades', document.getElementById('input-kades').value);
-            localStorage.setItem('bakti', document.getElementById('input-bakti').value);
-            alert("✅ Profil, Visi & Misi Desa berhasil diperbarui!");
+        function updateSubBidang() {
+            const bidang = document.getElementById('bidangRKP').value;
+            const subSelect = document.getElementById('subBidangRKP');
+            subSelect.innerHTML = '<option value="">-- Pilih Sub Bidang --</option>';
+            if (bidang && dataSub[bidang]) {
+                dataSub[bidang].forEach(sub => {
+                    let opt = document.createElement('option');
+                    opt.value = sub; opt.innerHTML = sub;
+                    subSelect.appendChild(opt);
+                });
+            }
         }
 
-        // 2. Tambah Galeri Dokumentasi
-        function tambahDokumentasi(e) {
-            e.preventDefault();
-            let listGaleri = JSON.parse(localStorage.getItem('dataGaleriDesa')) || [];
-            let dataBaru = {
-                url: document.getElementById('input-img-url').value,
-                title: document.getElementById('input-img-title').value
-            };
-            listGaleri.push(dataBaru);
-            localStorage.setItem('dataGaleriDesa', JSON.stringify(listGaleri));
+        function showSection(id) {
+            // 1. Sembunyikan semua section dengan menghapus class 'active'
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             
-            alert("✅ Foto kegiatan berhasil ditambahkan ke Dokumentasi!");
-            document.getElementById('form-dokumentasi').reset();
-            renderPreviewGaleri();
-        }
-
-        function renderPreviewGaleri() {
-            let listGaleri = JSON.parse(localStorage.getItem('dataGaleriDesa')) || [];
-            let container = document.getElementById('preview-dokumentasi');
-            container.innerHTML = listGaleri.length === 0 ? "<span style='color:#94a3b8; font-size:12px;'>Belum ada dokumentasi tambahan.</span>" : "";
-            listGaleri.forEach((item, index) => {
-                container.innerHTML += `<div class="preview-item">
-                    <span>🖼️ ${item.title}</span>
-                    <button class="btn-hapus" onclick="hapusGaleri(${index})">Hapus</button>
-                </div>`;
+            // 2. Tampilkan section yang dipilih dengan menambahkan class 'active'
+            const targetSection = document.getElementById('section-' + id);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        
+            // 3. Update otomatis teks Judul Besar di Header Atas Dashboard
+            const titleText = document.getElementById('title-text');
+            if (titleText) {
+                switch(id) {
+                    case 'ringkasan': titleText.innerText = 'Ringkasan Dashboard'; break;
+                    case 'profil': titleText.innerText = 'Pengaturan Profil Desa'; break;
+                    case 'penduduk': titleText.innerText = 'Manajemen Data Kependudukan'; break; // <-- BARIS INI BERHASIL DITAMBAHKAN
+                    case 'rkp': titleText.innerText = 'Input RKP Desa'; break;
+                    case 'anggaran': titleText.innerText = 'Kelola Anggaran Pendapatan'; break;
+                    case 'dokumentasi-admin': titleText.innerText = 'Koleksi Dokumentasi Kegiatan'; break;
+                    case 'prioritas': titleText.innerText = 'Prioritas Pembangunan'; break;
+                    case 'progres': titleText.innerText = 'Update Progres Lapangan'; break;
+                    case 'pdf': titleText.innerText = 'Upload Dokumen APBDes & RKP'; break;
+                    case 'pengaduan': titleText.innerText = 'Manajemen Pengaduan Warga'; break;
+                    default: titleText.innerText = 'Dashboard Admin';
+                }
+            }
+        
+            // 4. Update style tombol di sidebar agar terlihat menu mana yang sedang aktif
+            document.querySelectorAll('aside button').forEach(btn => {
+                // Jika tombol memiliki fungsi onclick yang mengandung id section ini
+                if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${id}'`)) {
+                    btn.classList.add('bg-slate-800', 'text-white');
+                    btn.classList.remove('text-slate-300');
+                } else {
+                    btn.classList.remove('bg-slate-800', 'text-white');
+                    btn.classList.add('text-slate-300');
+                }
             });
-        }
-
-        function hapusGaleri(index) {
-            let listGaleri = JSON.parse(localStorage.getItem('dataGaleriDesa')) || [];
-            listGaleri.splice(index, 1);
-            localStorage.setItem('dataGaleriDesa', JSON.stringify(listGaleri));
-            renderPreviewGaleri();
-        }
-
-        // 3. Tambah Tabel Realisasi Proker
-        function tambahTabelProker(e) {
-            e.preventDefault();
-            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
-            let dataBaru = {
-                nama: document.getElementById('input-proker').value,
-                pagu: document.getElementById('input-anggaran').value,
-                realisasi: document.getElementById('input-realisasi').value,
-                status: document.getElementById('input-status').value
-            };
-            listTabel.push(dataBaru);
-            localStorage.setItem('dataTabelProker', JSON.stringify(listTabel));
             
-            alert("✅ Program kerja baru berhasil ditambahkan ke tabel!");
-            document.getElementById('form-tabel').reset();
-            renderPreviewTabel();
+            showSection
+              if (id === 'prioritas') {
+                  renderPrioritas();
+              } else if (id === 'progres') {
+                  renderProgres();
+              }
+              
+
+            
         }
 
-        function renderPreviewTabel() {
-            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
-            let container = document.getElementById('preview-tabel');
-            container.innerHTML = listTabel.length === 0 ? "<span style='color:#94a3b8; font-size:12px;'>Belum ada program kerja tambahan.</span>" : "";
-            listTabel.forEach((item, index) => {
-                container.innerHTML += `<div class="preview-item">
-                    <span>📊 ${item.nama} (${item.pagu})</span>
-                    <button class="btn-hapus" onclick="hapusTabel(${index})">Hapus</button>
+        function formatRupiah(n) { return "Rp " + new Intl.NumberFormat('id-ID').format(n); }
+
+      
+       // =====================================================================
+      // EVENT SUBMIT FORM RKP DESA - AKOMODASI 5 SUMBER DANA (DDS, ADD, PAD, BHPR, SILPA)
+      // =====================================================================
+      document.getElementById('formRKP').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const nama = document.getElementById('namaRKP').value;
+          const bidang = document.getElementById('bidangRKP').value;
+          const subBidang = document.getElementById('subBidangRKP').value;
+          const status = document.getElementById('statusRKP').value;
+          const nilaiRaw = document.getElementById('nilaiRKP').value;
+          
+          // Ambil nilai dari dropdown, paksa ke Huruf Kapital murni & bersihkan spasi
+          let sumberDana = document.getElementById('sumberDanaRKP').value;
+          if (sumberDana) {
+              sumberDana = sumberDana.toUpperCase().trim();
+          }
+          
+          const editIndex = parseInt(document.getElementById('editIndex').value);
+          
+          // =====================================================================
+          // LOGIKA PERBAIKAN VALIDASI SALDO (SINKRONISASI 5 JENIS SUMBER DANA)
+          // =====================================================================
+          const anggaranDibutuhkan = parseFloat(nilaiRaw) || 0;
+          const daftarAnggaran = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+          const daftarRKP = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+      
+          // 1. Cari data pagu utama di Kelola Anggaran (Anti-Sensitif Huruf Besar/Kecil)
+          const dataDana = daftarAnggaran.find(item => {
+              const sumberDb = item.sumber || item.sumberDana || "";
+              return sumberDb.toString().toUpperCase().trim() === sumberDana;
+          });
+          
+          if (!dataDana) {
+              alert(`❌ Gagal menyimpan! Sumber dana "${sumberDana}" belum didaftarkan di menu Kelola Anggaran.\n\n` +
+                    `Pastikan di menu Kelola Anggaran Anda sudah menginput target dana untuk: DDS, ADD, PAD, BHPR, atau SILPA.`);
+              return; // Blokir penyimpanan jika sumber anggaran belum dibuat pagunya
+          }
+      
+          // Ambil total nilai anggaran murni dari Kelola Anggaran
+          const totalPaguMurni = parseFloat(dataDana.jumlah || dataDana.nilai) || 0;
+      
+          // 2. Hitung berapa saldo yang sudah terpakai oleh kegiatan RKP LAIN
+          let totalTerpakaiLain = 0;
+          daftarRKP.forEach((rkp, idx) => {
+              if (editIndex === idx) return; // KUNCI EDIT: Abaikan nominal lama dari data yang sedang diedit ini
+      
+              const rkpSumber = rkp.sumberDana || rkp.sumber || "";
+              if (rkpSumber.toString().toUpperCase().trim() === sumberDana) {
+                  totalTerpakaiLain += parseFloat(rkp.nilai || rkp.anggaran) || 0;
+              }
+          });
+      
+          // 3. Kalkulasi Sisa Saldo yang Riil Tersedia
+          const sisaSaldoTersedia = totalPaguMurni - totalTerpakaiLain;
+      
+          // 4. Jalankan Validasi Nominal Anggaran
+          if (anggaranDibutuhkan > sisaSaldoTersedia) {
+              alert(`❌ Gagal Menyimpan! Saldo tidak mencukupi.\n\n` +
+                    `Sumber Dana: ${sumberDana}\n` +
+                    `Dana Tersedia saat ini: Rp ${sisaSaldoTersedia.toLocaleString('id-ID')}\n` +
+                    `Anggaran yang Diajukan: Rp ${anggaranDibutuhkan.toLocaleString('id-ID')}`);
+              return; // Hentikan penyimpanan jika nominal melebihi sisa dana
+          }
+          // =====================================================================
+      
+          // =====================================================================
+          // PROSES STRUKTUR DATA PEMETAAN (SINKRON UTK WARGA & ADMIN)
+          // =====================================================================
+          const dataBaru = {
+              nama: nama,
+              kegiatan: nama,               
+              bidang: bidang,
+              subBidang: subBidang,
+              sub: subBidang,
+              status: status,
+              nilai: anggaranDibutuhkan,
+              anggaran: anggaranDibutuhkan, 
+              sumberDana: sumberDana, // Menyimpan format standar bersih (DDS/ADD/PAD/BHPR/SILPA)
+              sumber: sumberDana,     // Menyimpan format standar bersih (DDS/ADD/PAD/BHPR/SILPA)
+              progres: (editIndex !== -1 && daftarRKP[editIndex]) ? (daftarRKP[editIndex].progres || "0%") : "0%",
+              foto: (editIndex !== -1 && daftarRKP[editIndex]) ? (daftarRKP[editIndex].foto || "") : "",
+              diperbarui: new Date().toLocaleDateString('id-ID')
+          };
+      
+          // Eksekusi Simpan Baru atau Update Edit ke dalam Array
+          if (editIndex === -1) {
+              daftarRKP.push(dataBaru);
+          } else {
+              daftarRKP[editIndex] = dataBaru;
+          }
+      
+          // Rekam kembali ke Penyimpanan Lokal Komputer
+          localStorage.setItem('desa_rkp', JSON.stringify(daftarRKP));
+          
+          // =====================================================================
+          // SINKRONISASI INTERFACES & CLOUD FIREBASE
+          // =====================================================================
+          if (typeof renderTabelRKPDesa === 'function') {
+              renderTabelRKPDesa();
+          }
+          
+          if (typeof sinkronkanKeFirebase === 'function') {
+              sinkronkanKeFirebase();
+          }
+      
+          if (typeof updateRingkasanStatistik === 'function') {
+              updateRingkasanStatistik();
+          }
+      
+          // =====================================================================
+          // RESET FORMULIR KEMBALI KE DEFAULT
+          // =====================================================================
+          document.getElementById('formRKP').reset();
+          document.getElementById('editIndex').value = "-1";
+          
+          const btnSimpan = document.getElementById('btnSimpan');
+          if (btnSimpan) btnSimpan.innerText = "Simpan Kegiatan";
+          
+          alert("Data Kegiatan RKP Berhasil Disimpan!");
+      });
+
+
+      
+      // =====================================================================
+      // FIXED CORE: RE-RENDER TABEL RKP DENGAN INTEGRASI TOMBOL EDIT & HAPUS
+      // =====================================================================
+      function renderTabelRKPDesa() {
+          // SINKRONISASI ID: Membidik ID 'bodyTabelRKP' sesuai dengan tag <tbody> pada HTML Anda
+          const wadahTabel = document.getElementById('tabelDataRKP');
+          if (!wadahTabel) return;
+      
+          // Menarik data dari laci yang sama dengan halaman depan index.html
+          const dataLokal = localStorage.getItem('desa_rkp');
+          
+          if (!dataLokal || JSON.parse(dataLokal).length === 0) {
+              wadahTabel.innerHTML = `
+                  <tr>
+                      <td colspan="8" class="p-8 text-center text-sm font-medium text-slate-400 bg-slate-50/50">
+                          <i class="fas fa-folder-open text-2xl mb-2 block text-slate-300"></i>
+                          Belum ada data kegiatan RKP Desa. Silakan isi form di atas.
+                      </td>
+                  </tr>`;
+              return;
+          }
+          
+      
+          const listRKP = JSON.parse(dataLokal);
+          let html = '';
+      
+          listRKP.forEach((item, index) => {
+              // Pemetaan ganda (dual-field mapping) agar ramah index.html maupun admin-dashboard.html
+              const namaKegiatan = item.kegiatan || item.nama || '-';
+              const nominalUang = parseFloat(item.anggaran || item.nilai || 0);
+              const bidangKerja = item.bidang || '-';
+              const subBidangKerja = item.subBidang || item.sub || '-';
+              const statusKerja = item.status || 'Umum';
+              const progresKerja = item.progres ? (item.progres.toString().includes('%') ? item.progres : item.progres + '%') : '0%';
+              const sumberDana = item.sumberDana || item.sumber || '-';
+      
+              let warnaBadge = 'bg-slate-100 text-slate-700 border-slate-200';
+              if (statusKerja.toLowerCase() === 'prioritas' || statusKerja.toLowerCase() === 'selesai') {
+                  warnaBadge = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+              } else if (statusKerja.toLowerCase() === 'rutin' || statusKerja.toLowerCase() === 'progres') {
+                  warnaBadge = 'bg-blue-50 text-blue-700 border-blue-200';
+              }
+      
+              html += `
+                  <tr class="hover:bg-slate-50/50 transition border-b border-slate-100">
+                      <td class="p-4 text-center text-xs font-bold text-slate-400">${index + 1}</td>
+                      <td class="p-4">
+                          <div class="font-bold text-slate-800 text-sm leading-snug">${namaKegiatan}</div>
+                          <div class="text-[10px] text-slate-400 font-medium mt-0.5">${bidangKerja} / ${subBidangKerja}</div>
+                      </td>
+                      <td class="p-4 font-black text-slate-700 text-sm">Rp ${nominalUang.toLocaleString('id-ID')}</td>
+                      <td class="p-4 text-xs font-semibold text-slate-500">${sumberDana}</td>
+                      <td class="p-4 text-center">
+                          <span class="px-2.5 py-1 border rounded-full text-[10px] font-bold uppercase tracking-wider ${warnaBadge}">
+                              ${statusKerja}
+                          </span>
+                      </td>
+                      <td class="p-4 text-center font-black text-blue-600 text-xs">${progresKerja}</td>
+                      <td class="p-4 text-center text-[10px] font-medium text-slate-400">${item.diperbarui || '-'}</td>
+                      <td class="p-4 text-center">
+                          <div class="flex items-center justify-center space-x-2">
+                              <button type="button" onclick="editRKP(${index})" class="p-1.5 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200 rounded-lg text-xs transition">
+                                  <i class="fas fa-edit"></i>
+                              </button>
+                              <button type="button" onclick="hapusRKP(${index})" class="p-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-lg text-xs transition">
+                                  <i class="fas fa-trash"></i>
+                              </button>
+                          </div>
+                      </td>
+                  </tr>`;
+          });
+      
+          wadahTabel.innerHTML = html;
+          sinkronkanKeFirebase();
+
+      }
+      
+      // Jembatan nama fungsi cadangan agar jika dipanggil dari bagian mana pun tetap mengeksekusi fungsi utama
+      function renderTabelRKP() { renderTabelRKPDesa(); }
+      function renderRKP() { renderTabelRKPDesa(); }
+      
+        function editRKP(idx) {
+            const list = JSON.parse(localStorage.getItem('desa_rkp'));
+            const item = list[idx];
+            document.getElementById('namaRKP').value = item.nama;
+            document.getElementById('bidangRKP').value = item.bidang;
+            updateSubBidang();
+            document.getElementById('subBidangRKP').value = item.sub;
+           document.getElementById('statusRKP').value = item.status;
+            document.getElementById('nilaiRKP').value = item.nilai;
+        // TAMBAHKAN BARIS INI
+            document.getElementById('sumberDanaRKP').value = item.sumberDana || ""; 
+    
+            document.getElementById('editIndex').value = idx;
+            document.getElementById('form-rkp-title').innerText = "Edit Kegiatan RKP";
+            document.getElementById('btnBatal').classList.remove('hidden');
+            document.querySelector('#formRKP').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hapusRKP(idx) {
+            if(confirm("Hapus kegiatan?")) {
+                let list = JSON.parse(localStorage.getItem('desa_rkp'));
+                list.splice(idx, 1);
+                localStorage.setItem('desa_rkp', JSON.stringify(list));
+                renderTabelRKP();
+                updateStats();
+                sinkronkanKeFirebase();
+            }
+            
+        }
+
+        function resetFormRKP() {
+            document.getElementById('formRKP').reset();
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('btnSimpan').innerText = "Simpan Kegiatan";
+            if(document.getElementById('btnBatal')) document.getElementById('btnBatal').classList.add('hidden');
+        }
+        
+        // =====================================================================
+        // EVENT SUBMIT FORM KELOLA ANGGARAN - SINKRON DENGAN 5 SUMBER DANA RKP
+        // =====================================================================
+        document.getElementById('formAnggaran').addEventListener('submit', function(e) {
+            e.preventDefault();
+        
+            // 1. Ambil nilai input dari elemen form anggaran Anda
+            const elemenSumber = document.getElementById('sumberAnggaran') || document.getElementById('sumberDana');
+            const elemenJumlah = document.getElementById('jumlahAnggaran') || document.getElementById('nilaiAnggaran');
+        
+            if (!elemenSumber || !elemenJumlah) {
+                console.error("❌ Elemen input anggaran tidak ditemukan. Periksa kembali ID elemen HTML Anda.");
+                return;
+            }
+        
+            // KUNCI SINKRONISASI: Paksa input teks sumber menjadi HURUF KAPITAL dan hapus spasi palsu
+            let sumberMurni = elemenSumber.value.toUpperCase().trim();
+            const jumlahMurni = parseFloat(elemenJumlah.value) || 0;
+        
+            if (sumberMurni === "" || jumlahMurni <= 0) {
+                alert("❌ Gagal Menyimpan! Nama sumber dana harus diisi dan jumlah anggaran harus lebih dari 0.");
+                return;
+            }
+        
+            // 2. Load database anggaran lama dari localStorage
+            let listAnggaran = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+        
+            // Pemetaan struktur objek data agar serasi dengan panggilan (.jumlah atau .nilai) di form RKP
+            const dataAnggaranBaru = {
+                sumber: sumberMurni,      // Menyimpan singkatan murni (DDS / ADD / PAD / BHPR / SILPA)
+                sumberDana: sumberMurni,  
+                jumlah: jumlahMurni,      // Digunakan untuk kalkulasi pagu murni
+                nilai: jumlahMurni,       
+                diperbarui: new Date().toLocaleDateString('id-ID')
+            };
+        
+            // 3. Cek apakah sumber anggaran tersebut sudah pernah diinput sebelumnya (mencegah duplikasi ganda)
+            const indexDataLama = listAnggaran.findIndex(item => item.sumber.toUpperCase().trim() === sumberMurni);
+        
+            if (indexDataLama > -1) {
+                // Jika sudah ada, sistem otomatis memperbarui nominal pagunya (Overwrite)
+                listAnggaran[indexDataLama] = dataAnggaranBaru;
+            } else {
+                // Jika belum ada, masukkan sebagai baris anggaran baru
+                listAnggaran.push(dataAnggaranBaru);
+            }
+        
+            // 4. Rekam kembali ke database lokal admin
+            localStorage.setItem('desa_anggaran', JSON.stringify(listAnggaran));
+        
+            // =====================================================================
+            // REFRESH TAMPILAN INTERFACE & CLOUD DATABASE
+            // =====================================================================
+            // Jalankan fungsi render tabel anggaran bawaan skrip asli Anda
+            if (typeof renderTabelAnggaran === 'function') {
+                renderTabelAnggaran();
+            } else if (typeof renderAnggaranAdmin === 'function') {
+                renderAnggaranAdmin();
+            }
+        
+            // Picu pengunggahan real-time langsung ke cloud server Firebase Anda
+            if (typeof sinkronkanKeFirebase === 'function') {
+                sinkronkanKeFirebase();
+            }
+        
+            // Update data widget ringkasan statistik atas dashboard jika tersedia
+            if (typeof updateStats === 'function') {
+                updateStats();
+            } else if (typeof updateRingkasanStatistik === 'function') {
+                updateRingkasanStatistik();
+            }
+        
+            // 5. Reset input form ke kondisi kosong semula
+            e.target.reset();
+            
+            alert(`✔️ Pagu Anggaran "${sumberMurni}" sebesar Rp ${jumlahMurni.toLocaleString('id-ID')} berhasil disimpan & disinkronkan!`);
+        });
+
+
+// Fungsi untuk menampilkan daftar anggaran di menu Kelola Anggaran
+
+    function renderTabelAnggaran() {
+        const list = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+        const body = document.getElementById('tabelDaftarAnggaran');
+        if(!body) return;
+        
+        body.innerHTML = '';
+    
+        // PERBAIKAN 1: Mengubah 'idx' menjadi 'index' agar sinkron dengan tombol aksi
+        list.forEach((item, index) => {
+            body.innerHTML += `
+            <tr class="border-b hover:bg-slate-50">
+                <td class="p-4 font-semibold text-slate-700">${item.sumber}</td>
+                <td class="p-4 text-blue-600 font-bold">${formatRupiah(item.nilai)}</td>
+                <td class="p-4 text-center space-x-2">
+                    <button type="button" onclick="bukaEditAnggaran(${index})" class="bg-yellow-500 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-yellow-600 transition shadow-sm">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                    
+                    <button type="button" onclick="hapusAnggaran(${index})" class="bg-red-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-700 transition shadow-sm">
+                        <i class="fas fa-trash mr-1"></i> Hapus
+                    </button>
+                </td>
+            </tr>
+        `;
+        }); // PERBAIKAN 2: Menghapus kurung penutup ganda yang berlebih di sini
+    
+        sinkronkanKeFirebase();
+    }
+
+
+// Fungsi hapus anggaran
+function hapusAnggaran(idx) {
+    if(confirm("Hapus sumber anggaran ini?")) {
+        let list = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+        list.splice(idx, 1);
+        localStorage.setItem('desa_anggaran', JSON.stringify(list));
+        renderTabelAnggaran();
+        sinkronkanKeFirebase();
+        updateStats(); // Angka di ringkasan otomatis ikut berkurang
+    }
+}
+
+  // Update fungsi updateStats agar lebih akurat
+    function updateStats() {
+        // 1. Ambil data dari LocalStorage
+        const rkp = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+        const ang = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+       
+        // 2. Hitung Total Pendapatan dari menu "Kelola Anggaran"
+        let totalPendapatan = 0; 
+        ang.forEach(i => totalPendapatan += parseInt(i.nilai || 0));
+       
+        // 3. Hitung Total Pengeluaran dari menu "Input RKP"
+        let totalPengeluaranRKP = 0; 
+        rkp.forEach(i => totalPengeluaranRKP += parseInt(i.nilai || 0));
+    
+        // 4. Update Angka di Widget Ringkasan (Atas)
+        if(document.getElementById('stat-rkp')) 
+             document.getElementById('stat-rkp').innerText = rkp.length;
+       
+        if(document.getElementById('stat-anggaran')) 
+            document.getElementById('stat-anggaran').innerText = formatRupiah(totalPendapatan);
+       
+        if(document.getElementById('stat-saldo')) 
+            document.getElementById('stat-saldo').innerText = formatRupiah(totalPendapatan - totalPengeluaranRKP);
+    
+        // 5. UPDATE TEKS INFO DI DALAM FORM RKP
+        const infoSaldo = document.getElementById('info-saldo-form');
+        if(infoSaldo) {
+            const saldoSkrg = totalPendapatan - totalPengeluaranRKP;
+            infoSaldo.innerText = `Sisa saldo yang dapat digunakan: ${formatRupiah(saldoSkrg)}`;
+           
+            if(saldoSkrg < 1000000) {
+                infoSaldo.classList.add('text-red-500');
+            } else {
+                infoSaldo.classList.remove('text-red-500');
+            }
+        }
+       
+        // 6. Jalankan fungsi render pendukung agar data selalu aktual
+        updateBadgeAduan();
+        renderPrioritas(); // <-- TAMBAHKAN INI AGAR PRIORITAS TERUPDATE
+        renderProgres();   // <-- TAMBAHKAN INI AGAR PROGRES TERUPDATE
+       
+        if (typeof renderTabelPendudukAdmin === 'function') {
+            renderTabelPendudukAdmin();
+        }
+        sinkronkanKeFirebase();
+
+        
+    }
+
+
+    // =====================================================================
+    // SINKRONISASI PEMANGGILAN DATA AWAL SAAT HALAMAN ADMIN DIMUAT
+    // =====================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTabelAnggaran();
+        renderPengaduanTable();
+        renderTabelRKPDesa(); // Memastikan tabel utama RKP termuat
+        renderPrioritas();    // Memastikan menu prioritas siap data
+        renderProgres();      // Memastikan menu progres siap data
+        updateStats();        // Mengkalkulasi seluruh statistik desa
+    
+        // ߓ SISIPKAN BARIS INI DI SINI (KODE TAMBAHAN BARU):
+        if (typeof renderTabelDokumentasiAdmin === 'function') {
+            renderTabelDokumentasiAdmin(); // Memastikan galeri foto dokumentasi langsung muncul
+        }
+    
+        // Biarkan fungsi sinkronisasi firebase tetap di paling bawah blok
+        sinkronkanKeFirebase(); 
+    });
+
+
+
+        // --- RENDER PROGRES & FOTO ---
+        function renderProgres() {
+            const list = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+            const body = document.getElementById('tabelProgres');
+            body.innerHTML = '';
+            list.forEach((item, idx) => {
+                body.innerHTML += `<tr>
+                    <td class="p-4">
+                        <div class="font-bold text-slate-800">${item.nama}</div>
+                        <div class="text-[10px] text-gray-500 uppercase">${item.bidang} / ${item.sub}</div>
+                    </td>
+                    <td class="p-4">${item.foto ? `<img src="${item.foto}" class="image-preview">` : '<div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-[8px] text-gray-400">No Photo</div>'}</td>
+                    <td class="p-4">
+                        <div class="w-24 bg-gray-200 h-2 rounded-full overflow-hidden mb-1"><div class="bg-green-500 h-full" style="width: ${item.progres}%"></div></div>
+                        <span class="text-xs font-black text-green-700">${item.progres}%</span>
+                    </td>
+                    <td class="p-4">
+                        <input type="number" id="inp-p-${idx}" placeholder="%" class="w-12 border rounded text-xs p-1 mb-1">
+                        <input type="file" id="inp-f-${idx}" class="text-[9px] block">
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="saveProg(${idx})" class="bg-slate-800 text-white px-3 py-1 rounded text-[10px] font-bold">UPDATE</button>
+                    </td>
+                </tr>`;
+            });
+            sinkronkanKeFirebase();
+
+        }
+
+        function saveProg(idx) {
+            let list = JSON.parse(localStorage.getItem('desa_rkp'));
+            const p = document.getElementById(`inp-p-${idx}`).value;
+            const f = document.getElementById(`inp-f-${idx}`).files[0];
+            if(p !== "") list[idx].progres = p;
+            if(f) {
+                const r = new FileReader();
+                r.onloadend = () => { list[idx].foto = r.result; localStorage.setItem('desa_rkp', JSON.stringify(list)); renderProgres(); };
+                r.readAsDataURL(f);
+            } else { localStorage.setItem('desa_rkp', JSON.stringify(list)); renderProgres(); }
+            alert("Progres diperbarui!");
+            sinkronkanKeFirebase();
+
+        }
+
+        function renderPrioritas() {
+            const list = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+            const container = document.getElementById('containerPrioritas');
+            container.innerHTML = '';
+            list.filter(i => i.status === 'Prioritas').forEach(item => {
+                container.innerHTML += `<div class="bg-white p-5 rounded-xl border-l-4 border-yellow-500 shadow-sm">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">${item.sub}</p>
+                    <h4 class="font-bold text-slate-800">${item.nama}</h4>
+                    <p class="text-blue-700 font-bold mt-2">${formatRupiah(item.nilai)}</p>
                 </div>`;
             });
+            sinkronkanKeFirebase();
+
         }
 
-        function hapusTabel(index) {
-            let listTabel = JSON.parse(localStorage.getItem('dataTabelProker')) || [];
-            listTabel.splice(index, 1);
-            localStorage.setItem('dataTabelProker', JSON.stringify(listTabel));
-            renderPreviewTabel();
+        function updateStats() {
+            const rkp = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+            const ang = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+            let tA = 0; ang.forEach(i => tA += parseInt(i.nilai));
+            let tR = 0; rkp.forEach(i => tR += parseInt(i.nilai));
+            document.getElementById('stat-rkp').innerText = rkp.length;
+            document.getElementById('stat-anggaran').innerText = formatRupiah(tA);
+            document.getElementById('stat-saldo').innerText = formatRupiah(tA - tR);
         }
 
-        // 4. Render Kotak Aduan yang dikirim warga dari index.html
-        function renderPreviewAduan() {
-            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
-            let container = document.getElementById('preview-aduan');
-            container.innerHTML = listAduan.length === 0 ? "<span style='color:#94a3b8; font-size:12px;'>Belum ada laporan aduan dari warga.</span>" : "";
-            listAduan.reverse().forEach((item, index) => {
-                container.innerHTML += `<div class="preview-item" style="flex-direction: column; gap: 3px; background: white; padding: 8px; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid #ef4444;">
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; color:#1e293b;">
-                        <span>🎫 ${item.tiket} - ${item.nama}</span>
-                        <button class="btn-hapus" onclick="hapusAduan(${listAduan.length - 1 - index})">Hapus</button>
-                    </div>
-                    <div style="font-size:11px; color:#64748b;">📞 WA: ${item.whatsapp}</div>
-                    <p style="color:#334155; margin-top:2px;">"${item.isi}"</p>
-                </div>`;
+        renderTabelRKP();
+        updateStats();
+        sinkronkanKeFirebase();
+        
+        
+        // Fungsi untuk mengecek saldo per sumber dana secara real-time
+function cekSaldoRealTime() {
+    const sumberTerpilih = document.getElementById('sumberDanaRKP').value;
+    const nilaiInput = parseInt(document.getElementById('nilaiRKP').value) || 0;
+    const editIndex = parseInt(document.getElementById('editIndex').value);
+    const infoBox = document.getElementById('status-saldo-sumber');
+    const teksInfo = document.getElementById('teks-saldo-sumber');
+
+    if (!sumberTerpilih) {
+        infoBox.classList.add('hidden');
+        return;
+    }
+
+    infoBox.classList.remove('hidden');
+
+    // Ambil Data
+    const listAnggaran = JSON.parse(localStorage.getItem('desa_anggaran')) || [];
+    const listRKP = JSON.parse(localStorage.getItem('desa_rkp')) || [];
+
+    // Hitung Plafon dari Kelola Anggaran
+    const plafon = listAnggaran
+        .filter(a => a.sumber.includes(sumberTerpilih))
+        .reduce((sum, item) => sum + parseInt(item.nilai || 0), 0);
+
+    // Hitung yang sudah terpakai di RKP (kecuali item yang sedang diedit)
+    const terpakai = listRKP.reduce((sum, item, idx) => {
+        if (idx !== editIndex && item.sumberDana === sumberTerpilih) {
+            return sum + parseInt(item.nilai || 0);
+        }
+        return sum;
+    }, 0);
+
+    const sisa = plafon - terpakai;
+    const sisaAkhir = sisa - nilaiInput;
+
+    // Update Tampilan
+    teksInfo.innerText = `Sisa tersedia: ${formatRupiah(sisa)}`;
+    
+    if (nilaiInput > sisa) {
+        infoBox.classList.replace('bg-slate-100', 'bg-red-100');
+        teksInfo.classList.add('text-red-600');
+        teksInfo.innerHTML = `⚠️ Saldo Kurang! Sisa: ${formatRupiah(sisa)}<br><span class="text-[9px]">Melebihi batas sebesar ${formatRupiah(nilaiInput - sisa)}</span>`;
+    } else {
+        infoBox.classList.replace('bg-red-100', 'bg-green-100');
+        teksInfo.classList.remove('text-red-600');
+        teksInfo.classList.add('text-green-700');
+        teksInfo.innerHTML = `Sisa tersedia: ${formatRupiah(sisa)} <br> <span class="text-[9px]">Saldo setelah input: ${formatRupiah(sisaAkhir)}</span>`;
+    }
+}
+
+// Hubungkan ke elemen form agar berjalan otomatis saat diketik/dipilih
+document.getElementById('sumberDanaRKP').addEventListener('change', cekSaldoRealTime);
+document.getElementById('nilaiRKP').addEventListener('input', cekSaldoRealTime);
+        
+        
+        function logout() {
+           const yakin = confirm("Apakah Anda yakin ingin keluar?");
+           if (yakin) {
+                // Hapus session login
+               localStorage.removeItem("isLogin");
+
+                // Kembali ke halaman login
+               window.location.href = 'index.html';
+            }
+        }
+
+
+// 1. Fungsi Render dengan 3 Aksi Status
+      function renderAduanAdmin() {
+          const listAduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+          const body = document.getElementById('tabelAduanAdmin');
+          body.innerHTML = '';
+      
+          listAduan.slice().reverse().forEach((item, originalIdx) => {
+              // Mencari index asli karena kita menggunakan reverse()
+              const idx = listAduan.length - 1 - originalIdx;
+              
+              let statusClass = "bg-gray-100 text-gray-600"; // Default: Diterima
+              if(item.status === 'Diproses') statusClass = "bg-blue-100 text-blue-600";
+              if(item.status === 'Selesai') statusClass = "bg-green-100 text-green-600";
+      
+              body.innerHTML += `
+                  <tr class="hover:bg-gray-50">
+                      <td class="p-4 text-[11px] text-gray-500">${item.tanggal}</td>
+                      <td class="p-4">
+                          <div class="font-bold">${item.nama}</div>
+                          <div class="text-[10px] text-green-600 font-bold">${item.telp}</div>
+                      </td>
+                      <td class="p-4 text-gray-600 italic">"${item.isi}"</td>
+                      <td class="p-4">
+                          <span class="px-2 py-1 rounded-full text-[10px] font-bold ${statusClass}">${item.status}</span>
+                      </td>
+                      <td class="p-4 text-center space-x-1">
+                          <button onclick="updateStatusAduan(${idx}, 'Diproses')" class="text-blue-500 hover:bg-blue-50 p-1 rounded" title="Proses">
+                              <i class="fas fa-spinner"></i>
+                          </button>
+                          <button onclick="updateStatusAduan(${idx}, 'Selesai')" class="text-green-500 hover:bg-green-50 p-1 rounded" title="Selesai">
+                              <i class="fas fa-check-double"></i>
+                          </button>
+                          <button onclick="hapusAduan(${idx})" class="text-red-500 hover:bg-red-50 p-1 rounded" title="Hapus">
+                              <i class="fas fa-trash"></i>
+                          </button>
+                      </td>
+                  </tr>`;
+          });
+          sinkronkanKeFirebase();
+      }
+
+// 2. Fungsi Update Status
+      function updateStatusAduan(idx, statusBaru) {
+          let listAduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+          listAduan[idx].status = statusBaru;
+          localStorage.setItem('desa_aduan', JSON.stringify(listAduan));
+          
+          renderAduanAdmin(); // Update tabel
+          updateBadgeAduan(); // Update angka di sidebar
+          sinkronkanKeFirebase();
+
+      }
+// 3. Fungsi hubungiWA
+      function hubungiWA(noTelp) {
+          if (!noTelp || noTelp === "-" || noTelp === "") {
+              alert("Nomor WhatsApp pelapor tidak tersedia.");
+              return;
+          }
+      
+          // 1. Bersihkan nomor (Hanya angka)
+          let cleanNumber = noTelp.replace(/\D/g, '');
+      
+          // 2. Koreksi format ke 62
+          if (cleanNumber.startsWith('0')) {
+              cleanNumber = '62' + cleanNumber.substring(1);
+          }
+          if (cleanNumber.startsWith('8')) {
+              cleanNumber = '62' + cleanNumber;
+          }
+      
+          // 3. Pesan otomatis
+          const pesan = encodeURIComponent("Halo, kami dari Pemerintah Desa ingin menindaklanjuti pengaduan Anda.");
+      
+          // 4. Gunakan format wa.me (Lebih ringan dan jarang diblokir)
+          const waUrl = `https://wa.me/${cleanNumber}?text=${pesan}`;
+      
+          // 5. Eksekusi Pembukaan
+          // Kita gunakan window.location.href jika window.open diblokir browser
+          const win = window.open(waUrl, '_blank');
+          if (win) {
+              win.focus();
+          } else {
+              // Jika pop-up diblokir, buka di tab yang sama sebagai cadangan
+              window.location.href = waUrl;
+          }
+      }
+
+// 4. Fungsi Cetak PDF Per Bulan
+      function cetakLaporanBulanan() {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          
+          const bulanSelect = document.getElementById('bulanLaporan');
+          const bulanDipilih = parseInt(bulanSelect.value);
+          const namaBulan = bulanSelect.options[bulanSelect.selectedIndex].text;
+          
+          const allAduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+      
+          // Filter data berdasarkan bulan
+          const dataFilter = allAduan.filter(item => {
+              if (!item.tanggal) return false;
+              
+              // Memecah tanggal (Asumsi format DD/MM/YYYY atau YYYY-MM-DD)
+              let bulanData;
+              if (item.tanggal.includes('-')) {
+                  // Jika format YYYY-MM-DD (dari input date)
+                  bulanData = parseInt(item.tanggal.split('-')[1]);
+              } else if (item.tanggal.includes('/')) {
+                  // Jika format DD/MM/YYYY (dari toLocaleDateString)
+                  bulanData = parseInt(item.tanggal.split('/')[1]);
+              }
+              
+              return bulanData === bulanDipilih;
+          });
+      
+          if (dataFilter.length === 0) {
+              alert(`Data kosong! Tidak ada pengaduan pada bulan ${namaBulan}`);
+              return;
+          }
+      
+          // Header PDF
+          doc.setFontSize(16);
+          doc.text("LAPORAN PENGADUAN WARGA", 105, 20, { align: "center" });
+          doc.setFontSize(10);
+          doc.text(`Pemerintah Desa Maju Jaya`, 105, 27, { align: "center" });
+          doc.text(`Periode Laporan: ${namaBulan} 2026`, 105, 33, { align: "center" });
+          doc.line(15, 38, 195, 38);
+      
+          // Konversi ke format tabel
+          const tableRows = dataFilter.map((item, index) => [
+              index + 1,
+              item.tanggal,
+              item.nama,
+              item.isi,
+              item.status || "Menunggu"
+          ]);
+      
+          // Render Tabel
+          doc.autoTable({
+              startY: 45,
+              head: [['No', 'Tanggal', 'Nama Pelapor', 'Isi Pengaduan', 'Status']],
+              body: tableRows,
+              headStyles: { fillStyle: [30, 41, 59] }, // Warna Navy
+              styles: { fontSize: 8, cellPadding: 3 }
+          });
+      
+          doc.save(`Laporan_Pengaduan_${namaBulan}_2026.pdf`);
+      }
+      
+      // Fungsi renderPengaduanTable untuk WA
+          // =========================================================================
+          // SINKRONISASI LOGIKA TABEL ADUAN WARGA (ADMIN-DASHBOARD.HTML)
+          // =========================================================================
+        function renderPengaduanTable() {
+            const listAduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+            const body = document.getElementById('aduanTableBody');
+            if (!body) return;
+            
+            // Jika data kosong, tampilkan pesan informatif
+            if (listAduan.length === 0) {
+                body.innerHTML = `
+                <tr>
+                    <td colspan="5" class="p-8 text-center text-sm text-gray-400 italic">
+                        <i class="fas fa-inbox text-xl block mb-2 text-gray-300"></i> Belum ada data aduan masuk dari masyarakat.
+                    </td>
+                </tr>`;
+                return;
+            }
+            
+            // Render data dengan urutan terbaru di atas (.reverse())
+            body.innerHTML = listAduan.slice().reverse().map((item, originalIdx) => {
+                // Karena di-reverse, kita hitung index asli di localStorage untuk keperluan edit/hapus
+                const idx = listAduan.length - 1 - originalIdx;
+                
+                // Atur warna label status secara dinamis
+                let statusColor = "bg-amber-100 text-amber-700 border-amber-200"; 
+                if (item.status === 'Diproses') statusColor = "bg-blue-100 text-blue-700 border-blue-200";
+                if (item.status === 'Selesai') statusColor = "bg-green-100 text-green-700 border-green-200";
+                
+                return `
+                <tr class="hover:bg-gray-50/80 transition-colors">
+                    <td class="p-4 text-xs font-medium text-gray-500">${item.tanggal || '-'}</td>
+                    <td class="p-4">
+                        <p class="text-sm font-bold text-slate-800">${item.nama}</p>
+                        <p class="text-[11px] text-emerald-600 font-semibold mt-0.5">
+                            <i class="fab fa-whatsapp"></i> ${item.telp || '-'}
+                        </p>
+                    </td>
+                    <td class="p-4 text-slate-600 font-medium italic">"${item.isi}"</td>
+                    <td class="p-4 text-center">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${statusColor}">
+                            ${item.status || 'Menunggu'}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center text-xs font-semibold space-x-1">
+                        <button onclick="updateStatusAduan(${idx}, 'Diproses')" class="text-blue-600 hover:text-blue-800 hover:underline">Proses</button>
+                        <span class="text-gray-300">|</span>
+                        <button onclick="updateStatusAduan(${idx}, 'Selesai')" class="text-green-600 hover:text-green-800 hover:underline">Selesai</button>
+                        <span class="text-gray-300">|</span>
+                        <button onclick="hubungiWA('${item.telp}')" class="text-emerald-600 hover:text-emerald-800" title="Hubungi Pelapor via WA">
+                            <i class="fab fa-whatsapp text-sm"></i>
+                        </button>
+                        <span class="text-gray-300">|</span>
+                        <button onclick="hapusAduan(${idx})" class="text-red-500 hover:text-red-700" title="Hapus Permanen">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+            sinkronkanKeFirebase();
+
+        }
+      
+      // Fungsi Pendukung WA (renderPengaduanTable)
+      
+            // Fungsi Kirim Pesan WA Otomatis
+      function hubungiWA(noTelp) {
+          if (!noTelp || noTelp === "-" || noTelp === "") {
+              alert("Nomor WhatsApp pelapor tidak ditemukan.");
+              return;
+          }
+          let cleanNumber = noTelp.replace(/\D/g, ''); // Ambil angka saja
+          if (cleanNumber.startsWith('0')) {
+              cleanNumber = '62' + cleanNumber.substring(1);
+          }
+          const pesan = encodeURIComponent("Halo, kami dari Pemerintah Desa Maju Jaya ingin menindaklanjuti laporan Anda terkait pengaduan di portal desa.");
+          window.open(`https://wa.me/${cleanNumber}?text=${pesan}`, '_blank');
+      }
+      
+      // Fungsi Update Status (Proses/Selesai)
+      function updateStatusAduan(index, statusBaru) {
+          let aduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+          aduan[index].status = statusBaru;
+          localStorage.setItem('desa_aduan', JSON.stringify(aduan));
+          renderPengaduanTable(); // Refresh tabel
+          sinkronkanKeFirebase();
+      }
+      
+      // Fungsi Hapus Aduan
+      function hapusAduan(index) {
+          if (confirm("Hapus pengaduan ini?")) {
+              let aduan = JSON.parse(localStorage.getItem('desa_aduan')) || [];
+              aduan.splice(index, 1);
+              localStorage.setItem('desa_aduan', JSON.stringify(aduan));
+              renderPengaduanTable(); // Refresh tabel
+          }
+          sinkronkanKeFirebase();
+
+      }
+
+
+      //
+      // Variable bantuan untuk menampung data gambar format Base64
+        let base64BaganDesa = "";
+
+        // Fungsi Load & Tampilkan Data Profil di Form
+        function renderProfil() {
+            const dataProfil = JSON.parse(localStorage.getItem('desa_profil'));
+            
+            if (dataProfil) {
+                document.getElementById('visimisiProfil').value = dataProfil.visimisi || "";
+                document.getElementById('tentangProfil').value = dataProfil.tentang || "";
+                
+                if (dataProfil.bagan) {
+                    base64BaganDesa = dataProfil.bagan;
+                    const imgEl = document.getElementById('imgPreviewBagan');
+                    imgEl.src = dataProfil.bagan;
+                    imgEl.classList.remove('hidden');
+                    document.getElementById('txtNoBagan').classList.add('hidden');
+                }
+            }
+            sinkronkanKeFirebase();
+
+        }
+
+        // Event handler ketika admin memilih file gambar baru
+        document.getElementById('baganProfil').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    base64BaganDesa = event.target.result; // Hasil konversi file ke base64 string
+                    const imgEl = document.getElementById('imgPreviewBagan');
+                    imgEl.src = base64BaganDesa;
+                    imgEl.classList.remove('hidden');
+                    document.getElementById('txtNoBagan').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Event Handler saat form profil disubmit (Simpan ke LocalStorage)
+        document.getElementById('formProfilDesa').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dataProfil = {
+                visimisi: document.getElementById('visimisiProfil').value,
+                tentang: document.getElementById('tentangProfil').value,
+                bagan: base64BaganDesa // Menyimpan string gambar base64
+            };
+            
+            localStorage.setItem('desa_profil', JSON.stringify(dataProfil));
+            alert("Profil Ohoi/Desa berhasil diperbarui!");
+            renderProfil();
+            sinkronkanKeFirebase();
+
+        });
+
+        // Pastikan profil juga ter-load otomatis jika dipanggil di DOMContentLoaded jika diperlukan
+
+
+        // Variabel penampung sementara string Base64 foto dokumentasi
+let base64Dokumentasi = "";
+
+        // Event listener untuk preview gambar dan validasi ukuran Max 5MB
+        document.getElementById('fotoDokumentasi').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validasi Ukuran File (5MB = 5 * 1024 * 1024 Bytes)
+                const maxSize = 5 * 1024 * 1024; 
+                if (file.size > maxSize) {
+                    alert("Gagal memilih file!\nUkuran file foto melebihi batas maksimal 5MB.");
+                    this.value = ""; // Reset input file
+                    document.getElementById('imgPreviewDokumentasi').classList.add('hidden');
+                    document.getElementById('txtNoDokumenFoto').classList.remove('hidden');
+                    base64Dokumentasi = "";
+                    return;
+                }
+        
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    base64Dokumentasi = event.target.result;
+                    const imgEl = document.getElementById('imgPreviewDokumentasi');
+                    imgEl.src = base64Dokumentasi;
+                    imgEl.classList.remove('hidden');
+                    document.getElementById('txtNoDokumenFoto').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Event handler saat Form Dokumentasi di-submit
+        document.getElementById('formDokumentasi').addEventListener('submit', function(e) {
+              e.preventDefault();
+          
+              const inputKeterangan = document.getElementById('keteranganDokumentasi') || document.getElementById('keterangan');
+              const inputFoto = document.getElementById('fotoDokumentasi') || document.getElementById('fileFoto');
+              const editIndex = parseInt(document.getElementById('editIndexDokumentasi').value);
+          
+              let listDokumentasi = JSON.parse(localStorage.getItem('desa_dokumentasi')) || [];
+              const keteranganText = inputKeterangan.value;
+          
+              // Logika pembacaan file gambar
+              const file = inputFoto.files[0];
+              
+              if (file) {
+                  const reader = new FileReader();
+                  reader.onload = function(event) {
+                      const stringBase64 = event.target.result;
+          
+                      prosesSimpanDokumentasi(keteranganText, stringBase64, editIndex, listDokumentasi);
+                  };
+                  reader.readAsDataURL(file);
+              } else {
+                  // JIKA MODE EDIT TIDAK GANTI FOTO: Gunakan foto lama yang sudah ada di database
+                  if (editIndex > -1 && listDokumentasi[editIndex]) {
+                      const fotoLama = listDokumentasi[editIndex].foto || listDokumentasi[editIndex].gambar;
+                      prosesSimpanDokumentasi(keteranganText, fotoLama, editIndex, listDokumentasi);
+                  } else {
+                      alert("❌ Gagal! Silakan pilih foto dokumentasi terlebih dahulu.");
+                  }
+              }
+          });
+          
+          // Fungsi pembantu eksekusi akhir penulisan database localstorage & cloud
+          function prosesSimpanDokumentasi(keterangan, fotoBase64, editIndex, listDokumentasi) {
+              const dataBaru = {
+                  keterangan: keterangan,
+                  keteranganDokumentasi: keterangan,
+                  foto: fotoBase64,
+                  gambar: fotoBase64,
+                  diperbarui: new Date().toLocaleDateString('id-ID')
+              };
+          
+              if (editIndex === -1) {
+                  // Mode Tambah Baru
+                  listDokumentasi.push(dataBaru);
+              } else {
+                  // Mode Edit Data Lama
+                  listDokumentasi[editIndex] = dataBaru;
+              }
+          
+              // Simpan ke LocalStorage dan refresh views
+              localStorage.setItem('desa_dokumentasi', JSON.stringify(listDokumentasi));
+              
+              renderTabelDokumentasiAdmin();
+              if (typeof sinkronkanKeFirebase === 'function') sinkronkanKeFirebase();
+          
+              // Reset Form ke kondisi semula
+              document.getElementById('formDokumentasi').reset();
+              document.getElementById('editIndexDokumentasi').value = "-1";
+              
+              const btnSimpanDok = document.getElementById('btnSimpanDokumentasi');
+              if (btnSimpanDok) btnSimpanDok.innerText = "Simpan Dokumentasi";
+          
+              alert("✔️ Data Dokumentasi Kegiatan Berhasil Diperbarui!");
+          }
+
+
+        // Fungsi untuk menampilkan daftar dokumentasi di tabel admin
+        function renderDokumentasiAdmin() {
+            const listDokumentasi = JSON.parse(localStorage.getItem('desa_dokumentasi')) || [];
+            const body = document.getElementById('tabelDokumentasiBody');
+            if (!body) return;
+
+            if (listDokumentasi.length === 0) {
+                body.innerHTML = `
+                <tr>
+                    <td colspan="4" class="p-6 text-center text-gray-400 italic">
+                        Belum ada dokumentasi kegiatan yang diupload.
+                    </td>
+                </tr>`;
+                return;
+            }
+
+            // Tampilkan data (Urutan terbaru di atas)
+            body.innerHTML = listDokumentasi.slice().reverse().map((item, originalIdx) => {
+                const idx = listDokumentasi.length - 1 - originalIdx;
+                return `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-4 text-center font-bold text-gray-400">${originalIdx + 1}</td>
+                    <td class="p-4">
+                        <img src="${item.foto}" class="w-20 h-14 object-cover rounded border shadow-sm">
+                    </td>
+                    <td class="p-4">
+                        <span class="text-[11px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-semibold block w-max mb-1">${item.tanggal}</span>
+                        <p class="text-sm font-medium text-slate-700">${item.keterangan}</p>
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="hapusDokumentasi(${idx})" class="text-red-500 hover:text-red-700 transition" title="Hapus Dokumentasi">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+            sinkronkanKeFirebase();
+
+        }
+
+        // Fungsi menghapus dokumentasi
+        function hapusDokumentasi(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus dokumentasi kegiatan ini secara permanen?")) {
+                let listDokumentasi = JSON.parse(localStorage.getItem('desa_dokumentasi')) || [];
+                listDokumentasi.splice(index, 1);
+                localStorage.setItem('desa_dokumentasi', JSON.stringify(listDokumentasi));
+                renderDokumentasiAdmin();
+            }
+            sinkronkanKeFirebase();
+
+        }
+        
+        
+        // =========================================================================
+        // LOGIKA FIX SINKRONISASI & UPLOAD DOKUMEN PDF (ANTI-BENTROK FORM)
+        // =========================================================================
+        
+        // Gunakan Listener yang aman agar render otomatis berjalan saat halaman siap
+        document.addEventListener("DOMContentLoaded", function() {
+            renderPdfAdmin();
+            sinkronkanKeFirebase();
+
+        });
+        
+        // Targetkan ke ID baru 'formKhususPdf' agar terbebas dari bentrokan ID browser
+        const formKhususPdf = document.getElementById('formKhususPdf');
+                if (formKhususPdf) {
+                    formKhususPdf.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        const jenis = document.getElementById('pdfJenis').value;
+                        const keterangan = document.getElementById('pdfKeterangan').value;
+                        const fileInput = document.getElementById('pdfFile');
+                        
+                        if (!fileInput.files || fileInput.files.length === 0) {
+                            alert("Silakan tentukan berkas PDF yang ingin diupload!");
+                            return;
+                        }
+                        
+                        const file = fileInput.files[0];
+                        
+                        if (file.type !== "application/pdf") {
+                            alert("Format salah! Sistem hanya menerima berkas asli ber-ekstensi .pdf");
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            try {
+                                const pdfBase64 = event.target.result;
+                                
+                                // =====================================================================
+                                // PROSES UTAMA SOLUSI 1: MEMICU UNDUHAN LANGSUNG KE MEMORI INTERNAL HP
+                                // =====================================================================
+                                const linkUnduh = document.createElement('a');
+                                linkUnduh.href = pdfBase64;
+                                
+                                // Membuat nama file otomatis yang bersih tanpa karakter aneh
+                                const namaFileBersih = (jenis + "_" + keterangan).replace(/[^a-zA-Z0-9]/g, "_");
+                                linkUnduh.download = namaFileBersih + ".pdf";
+                                
+                                // Jalankan simulasi klik untuk mengunduh ke folder internal perangkat
+                                document.body.appendChild(linkUnduh);
+                                linkUnduh.click();
+                                document.body.removeChild(linkUnduh);
+                                
+                                // =====================================================================
+                                // SIMPAN KE LOCALSTORAGE HANYA TEKS RINGKASANNYA (TANPA FILE BASE64 BERAT)
+                                // =====================================================================
+                                let listPdf = JSON.parse(localStorage.getItem('desa_dokumen_pdf')) || [];
+                                
+                                listPdf.push({
+                                    id: Date.now(),
+                                    jenis: jenis,
+                                    keterangan: keterangan,
+                                    fileData: "Tersimpan di Internal Perangkat", // Penanda teks ringan pengganti string raksasa
+                                    tanggal: new Date().toLocaleDateString('id-ID')
+                                });
+                                
+                                localStorage.setItem('desa_dokumen_pdf', JSON.stringify(listPdf));
+                                alert("Sukses! Dokumen telah diunduh ke memori internal & riwayat berhasil dicatat.");
+                                
+                                // Reset form input dan segarkan tabel di bawahnya
+                                document.getElementById('formKhususPdf').reset();
+                                renderPdfAdmin();
+                                
+                                // Tetap panggil fungsi sinkronisasi bawaan skrip Anda jika ada
+                                if (typeof sinkronkanKeFirebase === 'function') {
+                                    sinkronkanKeFirebase();
+                                }
+                            } catch (err) {
+                                alert("Terjadi kendala saat memproses file. Pastikan ukuran file tidak terlalu besar.");
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    });
+
+
+
+                } else {
+                    // JIKA MODE EDIT DAN USER TIDAK MENGGANTI FILE PDF (MEMPERTAHANKAN FILE LAMA)
+                    if (editIndex !== -1) {
+                        const pdfLama = listPdf[editIndex] ? listPdf[editIndex].fileData : "";
+                        eksekusiSimpanPdf(editIndex, jenis, keterangan, pdfLama, listPdf);
+                    }
+                }
+
+
+        // FUNGSI UTAMA EKSEKUSI PENYIMPANAN DATA AGAR ANTI-ERROR SPLIT
+        function eksekusiSimpanPdf(editIndex, jenis, keterangan, fileDataFinal, listPdf) {
+            // Pengaman: Pastikan fileDataFinal adalah string valid sebelum aman disinkronkan
+            if (!fileDataFinal || typeof fileDataFinal !== 'string') {
+                fileDataFinal = "";
+            }
+
+            const dataDokumen = {
+                id: editIndex === -1 ? Date.now() : (listPdf[editIndex]?.id || Date.now()),
+                jenis: jenis,
+                keterangan: keterangan,
+                fileData: fileDataFinal,
+                tanggal: new Date().toLocaleDateString('id-ID')
+            };
+
+            if (editIndex === -1) {
+                // Tambah baru
+                listPdf.push(dataDokumen);
+            } else {
+                // Update data edit
+                listPdf[editIndex] = dataDokumen;
+                // Kembalikan hidden input index ke -1 jika elemennya ada
+                const elEditIndex = document.getElementById('editIndexPdf');
+                if (elEditIndex) elEditIndex.value = "-1";
+                
+                // Kembalikan teks tombol jika ada
+                const btnSubmit = document.querySelector("#formKhususPdf button[type='submit']");
+                if (btnSubmit) btnSubmit.innerHTML = "Terbitkan Dokumen";
+            }
+
+            localStorage.setItem('desa_dokumen_pdf', JSON.stringify(listPdf));
+            alert("Dokumen resmi berhasil disimpan!");
+            
+            document.getElementById('formKhususPdf').reset();
+            renderPdfAdmin();
+            if (typeof sinkronkanKeFirebase === 'function') sinkronkanKeFirebase();
+        }
+
+        
+         // =====================================================================
+        // RENDER TABEL RIWAYAT DOKUMEN PDF
+        // =====================================================================
+        function renderPdfAdmin() {
+            const listPdf = JSON.parse(localStorage.getItem('desa_dokumen_pdf')) || [];
+            const wadahTabel = document.getElementById('tabelPdfAdmin');
+            if (!wadahTabel) return;
+            
+            if (listPdf.length === 0) {
+                wadahTabel.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic bg-gray-50/50">Belum ada dokumen PDF perencanaan yang diterbitkan.</td></tr>`;
+                return;
+            }
+            
+            wadahTabel.innerHTML = listPdf.slice().reverse().map((item, idx) => {
+                const originalIdx = listPdf.length - 1 - idx;
+                return `
+                <tr class="hover:bg-gray-50/80 transition text-xs">
+                    <td class="p-4 text-center font-bold text-gray-400">${idx + 1}</td>
+                    <td class="p-4"><span class="text-[10px] bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-black uppercase tracking-wide border border-red-200">${item.jenis}</span></td>
+                    <td class="p-4 font-semibold text-slate-800 leading-tight">
+                        ${item.keterangan}
+                        <span class="text-[10px] text-green-600 block font-normal mt-0.5"><i class="fas fa-check-circle"></i> Berkas aman di folder download internal</span>
+                        <span class="text-[10px] text-gray-400 block font-normal">Rilis: ${item.tanggal}</span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="hapusPdfAdmin(${originalIdx})" class="text-red-600 hover:text-red-700 text-xs font-bold flex items-center space-x-1 mx-auto bg-red-50 px-2.5 py-1.5 rounded-lg border border-red-100 transition active:scale-95">
+                            <i class="fas fa-trash-alt"></i> <span>Hapus</span>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+            
+            if (typeof sinkronkanKeFirebase === 'function') {
+                sinkronkanKeFirebase();
+            }
+        }
+
+        
+        function hapusPdfAdmin(index) {
+            if (confirm("Hapus catatan riwayat dokumen ini?")) {
+                let listPdf = JSON.parse(localStorage.getItem('desa_dokumen_pdf')) || [];
+                listPdf.splice(index, 1);
+                localStorage.setItem('desa_dokumen_pdf', JSON.stringify(listPdf));
+                sinkronkanKeFirebase();
+                renderPdfAdmin();
+            }
+        }
+        
+        // REGISTER EVENT LISTENER SAAT HALAMAN SELESAI DI-LOAD
+        document.addEventListener("DOMContentLoaded", function() {
+            renderTabelPendudukAdmin();
+            sinkronkanKeFirebase();
+
+        });
+        
+        // FUNGSI UNTUK MENYIMPAN / UPDATE DATA PENDUDUK
+        function simpanDataPenduduk(event) {
+            event.preventDefault();
+            
+            const kkVal = document.getElementById('inputTotalKK').value;
+            const pendudukVal = document.getElementById('inputTotalPenduduk').value;
+            
+            // Ambil tanggal hari ini secara otomatis
+            const tanggalHariIni = new Date().toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
             });
+        
+            const dataKependudukan = {
+                totalKK: parseInt(kkVal) || 0,
+                totalPenduduk: parseInt(pendudukVal) || 0,
+                diperbarui: tanggalHariIni
+            };
+        
+            // Simpan ke localStorage database
+            localStorage.setItem('desa_kependudukan', JSON.stringify(dataKependudukan));
+            
+            // Tampilkan notifikasi kesuksesan
+            alert('Data kependudukan berhasil diperbarui dan langsung live di halaman depan!');
+            
+            // Segarkan isi tabel di bawah form
+            renderTabelPendudukAdmin();
+            sinkronkanKeFirebase();
+
+
+        }
+        
+        // FUNGSI UNTUK RENDERING DATA DI BAWAH FORM INPUT
+        function renderTabelPendudukAdmin() {
+            const wadahTabel = document.getElementById('tabelPendudukAktif');
+            if (!wadahTabel) return;
+        
+            const dataLokal = localStorage.getItem('desa_kependudukan');
+            
+            if (!dataLokal) {
+                wadahTabel.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-gray-400 italic font-medium">
+                            Belum ada data kependudukan yang diinput. Silakan isi form di atas.
+                        </td>
+                    </tr>`;
+                return;
+            }
+        
+            const data = JSON.parse(dataLokal);
+            
+            // Set default value ke dalam form biar admin tidak perlu ngetik ulang angka sebelumnya jika ingin update
+            if(document.getElementById('inputTotalKK')) document.getElementById('inputTotalKK').value = data.totalKK;
+            if(document.getElementById('inputTotalPenduduk')) document.getElementById('inputTotalPenduduk').value = data.totalPenduduk;
+        
+            // Render baris data aktif ke dalam tabel di bawahnya
+            wadahTabel.innerHTML = `
+                <tr class="hover:bg-slate-50/50 transition">
+                    <td class="p-4 text-center font-bold text-slate-400">1</td>
+                    <td class="p-4 font-black text-slate-800 text-sm">${data.totalKK.toLocaleString('id-ID')} <span class="text-[10px] text-slate-400 font-normal ml-1">Kepala Keluarga</span></td>
+                    <td class="p-4 font-black text-slate-800 text-sm">${data.totalPenduduk.toLocaleString('id-ID')} <span class="text-[10px] text-slate-400 font-normal ml-1">Jiwa</span></td>
+                    <td class="p-4 text-center"><span class="bg-emerald-50 text-emerald-700 px-3 py-1 border border-emerald-200 rounded-full text-[10px] font-black uppercase tracking-wider">${data.diperbarui}</span></td>
+                </tr>
+            `;
+            
+            sinkronkanKeFirebase();
+        }
+        
+        // =========================================================================
+        // FUNGSI MANDIRI: SINKRONISASI GLOBAL (PERBAIKAN NAMA KEY SESUAI SCRIPT)
+        // =========================================================================
+        function sinkronkanKeFirebase() {
+            if (typeof dbRealtime === 'undefined') {
+                console.error("❌ Firebase belum siap atau dbRealtime tidak ditemukan.");
+                return;
+            }
+            
+            // Nama-nama KEY di bawah ini telah disesuaikan persis dengan skrip asli Anda
+            const keysData = [
+                'desa_rkp', 
+                'desa_dokumen_pdf', 
+                'desa_dokumentasi', 
+                'desa_kependudukan',
+                'desa_anggaran',
+                'desa_profil',     // Tambahan jika Anda ingin menyertakan profil desa ke cloud
+                'desa_aduan'       // Tambahan jika Anda ingin menyertakan aduan warga ke cloud
+            ];
+            
+            let updatePaket = {};
+            keysData.forEach(key => {
+                const localData = localStorage.getItem(key);
+                updatePaket[key] = localData ? JSON.parse(localData) : null;
+            });
+        
+            dbRealtime.ref('database_desa/').set(updatePaket)
+            .then(() => console.log("✔️ Sinkronisasi Cloud Firebase Berhasil! Semua data terkirim."))
+            .catch((error) => console.error("❌ Gagal unggah ke Firebase:", error));
+        }
+        
+        
+        // =====================================================================
+        // UPDATE FUNGSI RENDER DOKUMENTASI - DENGAN AKSI EDIT & HAPUS
+        // =====================================================================
+        function renderTabelDokumentasiAdmin() {
+            const wadahTabel = document.getElementById('tabelDokumentasiBody');
+            if (!wadahTabel) return;
+        
+            const dataLokal = localStorage.getItem('desa_dokumentasi');
+            if (!dataLokal) {
+                wadahTabel.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 italic text-xs">Belum ada dokumentasi kegiatan yang diunggah.</td></tr>`;
+                return;
+            }
+        
+            const daftarDokumentasi = JSON.parse(dataLokal);
+            let htmlBaris = '';
+        
+            daftarDokumentasi.forEach((item, index) => {
+                const srcFoto = item.foto || item.gambar || 'https://via.placeholder.com/150';
+                
+                htmlBaris += `
+                    <tr class="hover:bg-slate-50/50 transition border-b border-slate-100 text-xs">
+                        <td class="p-4 text-center font-bold text-slate-400">${index + 1}</td>
+                        <td class="p-4 text-center">
+                            <img src="${srcFoto}" class="w-16 h-16 object-cover rounded-lg mx-auto border border-slate-200 shadow-sm" alt="Foto" onerror="this.src='https://via.placeholder.com/150'">
+                        </td>
+                        <td class="p-4 font-medium text-slate-700 leading-relaxed">${item.keterangan || item.keteranganDokumentasi || '-'}</td>
+                        
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button type="button" onclick="bukaEditDokumentasi(${index})" class="bg-blue-50 hover:bg-blue-100 text-blue-600 px-2.5 py-1.5 border border-blue-200 rounded-lg text-[11px] font-black transition flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button type="button" onclick="hapusDokumentasiAdmin(${index})" class="bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1.5 border border-red-200 rounded-lg text-[11px] font-black transition flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-trash-alt"></i> Hapus
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        
+            wadahTabel.innerHTML = htmlBaris;
         }
 
-        function hapusAduan(index) {
-            let listAduan = JSON.parse(localStorage.getItem('databaseAduanWarga')) || [];
-            listAduan.splice(index, 1);
-            localStorage.setItem('databaseAduanWarga', JSON.stringify(listAduan));
-            renderPreviewAduan();
+
+        
+        function hapusDokumentasiAdmin(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus dokumentasi kegiatan ini?")) {
+                let dataLokal = JSON.parse(localStorage.getItem('desa_dokumentasi')) || [];
+                dataLokal.splice(index, 1);
+                
+                localStorage.setItem('desa_dokumentasi', JSON.stringify(dataLokal));
+                
+                // Refresh tabel admin secara instan setelah dihapus
+                renderTabelDokumentasiAdmin();
+                
+                // Kirim perubahan terbaru ke cloud Firebase
+                if (typeof sinkronkanKeFirebase === 'function') {
+                    sinkronkanKeFirebase();
+                }
+            }
         }
+
+
+        // =====================================================================
+        // FUNGSI AKSI: HAPUS DATA DOKUMENTASI & SINKRON CLOUD FIREBASE
+        // =====================================================================
+        function hapusDokumentasiAdmin(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus dokumentasi kegiatan ini?")) {
+                // 1. Ambil data saat ini dari localStorage
+                let dataLokal = JSON.parse(localStorage.getItem('desa_dokumentasi')) || [];
+                
+                // 2. Hapus data berdasarkan urutan baris (index)
+                dataLokal.splice(index, 1);
+                
+                // 3. Simpan kembali sisa data ke localStorage
+                localStorage.setItem('desa_dokumentasi', JSON.stringify(dataLokal));
+                
+                // 4. Refresh tabel admin secara instan agar baris langsung hilang
+                renderTabelDokumentasiAdmin();
+                
+                // 5. Kirim perubahan penghapusan langsung ke Cloud Firebase agar di index warga ikut terhapus
+                if (typeof sinkronkanKeFirebase === 'function') {
+                    sinkronkanKeFirebase();
+                }
+                
+                alert("✔️ Dokumentasi kegiatan berhasil dihapus!");
+            }
+        }
+        
+        // =====================================================================
+        // FUNGSI UNTUK MELEMPARKAN DATA KEMBALI KE FORM UNTUK DI-EDIT
+        // =====================================================================
+        function bukaEditDokumentasi(index) {
+            const dataLokal = localStorage.getItem('desa_dokumentasi');
+            if (!dataLokal) return;
+        
+            const daftarDokumentasi = JSON.parse(dataLokal);
+            const item = daftarDokumentasi[index];
+        
+            // 1. Isi text keterangan/deskripsi kembali ke form input
+            const inputKeterangan = document.getElementById('keteranganDokumentasi') || document.getElementById('keterangan');
+            if (inputKeterangan) {
+                inputKeterangan.value = item.keterangan || item.keteranganDokumentasi || '';
+            }
+        
+            // 2. Set penanda indeks dokumen yang sedang diedit
+            document.getElementById('editIndexDokumentasi').value = index;
+        
+            // 3. Opsional: Mengubah teks tombol simpan dokumentasi menjadi "Update" jika elemen ID tombol ada
+            const btnSimpanDok = document.getElementById('btnSimpanDokumentasi');
+            if (btnSimpanDok) {
+                btnSimpanDok.innerText = "ߒ Update Dokumentasi";
+            }
+        
+            // Scroll otomatis ke atas agar form input langsung terlihat oleh admin
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // =====================================================================
+        // FUNGSI UNTUK MELEMPARKAN DATA ANGGARAN KEMBALI KE FORM UNTUK DI-EDIT
+        // =====================================================================
+        function bukaEditAnggaran(index) {
+            const dataLokal = localStorage.getItem('desa_anggaran');
+            if (!dataLokal) return;
+        
+            const daftarAnggaran = JSON.parse(dataLokal);
+            const item = daftarAnggaran[index];
+        
+            // PERBAIKAN: Menggunakan properti item.sumber dan item.nilai agar data terisi kembali ke form
+            document.getElementById('sumberAnggaran').value = item.sumber || item.sumberDana || '';
+            document.getElementById('nilaiAnggaran').value = item.nilai || item.jumlah || '';
+        
+            // Set penanda indeks anggaran yang sedang diedit
+            document.getElementById('editIndexAnggaran').value = index;
+        
+            // Mengubah teks tombol simpan menjadi "Update Anggaran"
+            const btnSimpan = document.querySelector("#formAnggaran button[type='submit']");
+            if (btnSimpan) {
+                btnSimpan.innerHTML = "ߒ Update Anggaran";
+            }
+        
+            // Scroll otomatis ke atas agar form input langsung terlihat
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        
+        function bukaEditPdf(index) {
+            const listPdf = JSON.parse(localStorage.getItem('desa_dokumen_pdf')) || [];
+            const item = listPdf[index];
+            if (!item) return;
+        
+            document.getElementById('pdfJenis').value = item.jenis;
+            document.getElementById('pdfKeterangan').value = item.keterangan;
+        
+            // Sediakan elemen penampung index di HTML atau buat dinamis lewat window variable
+            let elEditIndex = document.getElementById('editIndexPdf');
+            if (!elEditIndex) {
+                elEditIndex = document.createElement('input');
+                elEditIndex.type = 'hidden';
+                elEditIndex.id = 'editIndexPdf';
+                document.getElementById('formKhususPdf').appendChild(elEditIndex);
+            }
+            elEditIndex.value = index;
+        
+            const btnSubmit = document.querySelector("#formKhususPdf button[type='submit']");
+            if (btnSubmit) btnSubmit.innerHTML = "ߒ Update Dokumen PDF";
+        
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // JALANKAN INI SEKALI SAAT REFRESH HALAMAN UNTUK MENGOSONGKAN SISA SAMPAH STORAGE PDF BERAT
+        localStorage.removeItem('desa_dokumen_pdf');
+
+ 
+        
     </script>
 </body>
 </html>
